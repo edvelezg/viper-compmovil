@@ -1,0 +1,9 @@
+MIDlet-1: HelloMIDlet, , hello.HelloMIDlet
+MIDlet-2: TercerMidlet,,conectividad.http.TercerMIDlet
+MIDlet-Jar-Size: 7147
+MIDlet-Jar-URL: conectividad.jar
+MIDlet-Name: conectividad
+MIDlet-Vendor: Vendor
+MIDlet-Version: 1.0
+MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Profile: MIDP-2.0
