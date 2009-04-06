@@ -53,21 +53,21 @@ public class ToDoList {
 	}
 
 	public void deleteItem(int id) {
-		try {
-			if (conn == null) {
-				conn = DriverManager.getConnection(jdbcConnectionString);
-			}
-			PreparedStatement stmt = conn.prepareStatement(
-					"DELETE FROM todo WHERE todoid=?");
-			stmt.setInt(1, id);
-			stmt.executeUpdate();
-		}
-		catch (SQLException ex) {
-			System.err.println(
-					"Error deleting a to-do list item from the database:\n" +
-					ex.getMessage());
-		}
-		staleList = true;
+//		try {
+//			if (conn == null) {
+//				conn = DriverManager.getConnection(jdbcConnectionString);
+//			}
+//			PreparedStatement stmt = conn.prepareStatement(
+//					"DELETE FROM todo WHERE todoid=?");
+//			stmt.setInt(1, id);
+//			stmt.executeUpdate();
+//		}
+//		catch (SQLException ex) {
+//			System.err.println(
+//					"Error deleting a to-do list item from the database:\n" +
+//					ex.getMessage());
+//		}
+//		staleList = true;
 	}
 
 	private void refreshList() {
@@ -77,11 +77,11 @@ public class ToDoList {
 					conn = DriverManager.getConnection(jdbcConnectionString);
 				}
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT todoid, todo FROM todo");
+				ResultSet rs = stmt.executeQuery("SELECT nombre, telefono FROM encuestas");
 
 				list = new ArrayList();
 				while (rs.next()) {
-					list.add(new ToDoItem(rs.getInt(1), rs.getString(2)));
+					list.add(new Datos(rs.getString(1), rs.getInt(2)));
 				}
 			}
 			catch (SQLException ex) {
