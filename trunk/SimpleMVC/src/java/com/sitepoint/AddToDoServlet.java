@@ -10,8 +10,8 @@ public class AddToDoServlet extends HttpServlet {
 
     String newToDo = request.getParameter("newtodo");
     if (newToDo != null) {
-      ToDoList toDoList = (ToDoList)getServletContext().getAttribute("toDoList");
-      toDoList.addItem(newToDo);
+//      ToDoList toDoList = (ToDoList)getServletContext().getAttribute("toDoList");
+//      toDoList.addItem(newToDo);
     }
     response.sendRedirect("index.html");
   }
