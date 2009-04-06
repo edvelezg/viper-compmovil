@@ -37,9 +37,11 @@ public class ToDoList {
 			if (conn == null) {
 				conn = DriverManager.getConnection(jdbcConnectionString);
 			}
+                        
 			PreparedStatement stmt = conn.prepareStatement(
-					"INSERT INTO todo (todo) VALUES (?)");
+					"INSERT INTO encuestas (nombre, telefono) VALUES (?, ?)");
 			stmt.setString(1, item);
+                        stmt.setInt(2, 595516);
 			stmt.executeUpdate();
 		}
 		catch (SQLException ex) {
