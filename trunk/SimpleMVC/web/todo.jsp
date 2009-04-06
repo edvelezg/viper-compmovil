@@ -16,7 +16,7 @@
     <form action="<c:url value="/DeleteItem.do"/>" method="post">
       <select name="deleteid" size="${spfn:max(2,fn:length(toDoItems))}">
         <c:forEach var="toDoItem" items="${toDoItems}">
-          <option value="${toDoItem.id}">${fn:escapeXml(toDoItem)}</option>
+          <option value="${toDoItem.tel}">${fn:escapeXml(toDoItem)}</option>
         </c:forEach>
       </select>
       <input type="submit" value="Delete Selected Item"/>
