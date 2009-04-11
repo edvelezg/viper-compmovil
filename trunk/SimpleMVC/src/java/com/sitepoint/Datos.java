@@ -1,24 +1,7 @@
 package com.sitepoint;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- *
- * @author Victor
- */
 import java.util.Vector;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-/**
- *
- * @author Victor
- */
 public class Datos {
 
     private int id;
