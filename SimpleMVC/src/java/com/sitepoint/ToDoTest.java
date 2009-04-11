@@ -14,8 +14,8 @@ public class ToDoTest {
 			System.out.println(" - " + it.next());
 		}
 
-		list.addItem("Another todo item.");
-		list.addItem("And yet another.");
+		list.addItem("Another todo item.", "2131221");
+		list.addItem("And yet another.", "1378123");
 
 		System.out.println("The to-do list contains " + list.getItemCount() +
 											 " items:");

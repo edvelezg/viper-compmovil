@@ -7,11 +7,7 @@ import java.io.*;
 
 import javax.servlet.http.HttpServlet;
 
-/**
- * @author Andr�s Felipe
- *
- * Window - Preferences - Java - Code Style - Code Templates
- */
+
 public class ServletEjemplo extends HttpServlet {
 
     public void init() throws ServletException {
@@ -42,15 +38,15 @@ public class ServletEjemplo extends HttpServlet {
 
             String nombre = din.readUTF();
             System.out.println("Nombre " + nombre);
-//            persona.setNombre(nombre);
+
+            String telefono = din.readUTF();
+            System.out.println("Telefono " + telefono);
 
             if (nombre != null) {
                 ToDoList toDoList = (ToDoList) getServletContext().getAttribute("toDoList");
-                toDoList.addItem(nombre);
+                toDoList.addItem(nombre, telefono);
             }
-
-            String apellido = din.readUTF();
-            System.out.println("Apellido " + apellido);
+           
 //            persona.setApellido(apellido);
 
 //            if (guardarPersona(persona)) {

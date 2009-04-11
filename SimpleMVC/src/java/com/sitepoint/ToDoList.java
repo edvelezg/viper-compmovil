@@ -32,7 +32,7 @@ public class ToDoList {
 		return list.size();
 	}
 
-	public void addItem(String item) {
+	public void addItem(String nombre, String telefono) {
 		try {
 			if (conn == null) {
 				conn = DriverManager.getConnection(jdbcConnectionString);
@@ -40,8 +40,9 @@ public class ToDoList {
                         
 			PreparedStatement stmt = conn.prepareStatement(
 					"INSERT INTO encuestas (nombre, telefono) VALUES (?, ?)");
-			stmt.setString(1, item);
-                        stmt.setInt(2, 595516);
+
+                        stmt.setString(1, nombre);
+                        stmt.setInt(2, Integer.parseInt(telefono));
 			stmt.executeUpdate();
 		}
 		catch (SQLException ex) {
