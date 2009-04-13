@@ -1,12 +1,12 @@
 package com.sitepoint;
 
-
+import java.awt.*;
+import java.awt.image.MemoryImageSource;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 
 import javax.servlet.http.HttpServlet;
-
 
 public class ServletEjemplo extends HttpServlet {
 
@@ -42,11 +42,27 @@ public class ServletEjemplo extends HttpServlet {
             String telefono = din.readUTF();
             System.out.println("Telefono " + telefono);
 
+            int width = din.readInt();
+            int height = din.readInt();
+
+            Image i;
+
+            int[] pixels = new int[width * height];
+            int c;
+            double radianConversion = Math.PI / 180.0;
+            for (int index = 0, y = 0; y < height; y++) {
+                c = ((0xff) &
+                        (byte) (Math.abs(Math.sin((y + height) * radianConversion)) * 255));
+                for (int x = 0; x < width; x++) {
+                    pixels[index++] = ((0xff << 24) | (c << 16) | (c << 8) | c);
+                }
+            }
+            i = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(width, height, pixels, 0, width));
+
             if (nombre != null) {
                 ToDoList toDoList = (ToDoList) getServletContext().getAttribute("toDoList");
                 toDoList.addItem(nombre, telefono);
             }
-           
 //            persona.setApellido(apellido);
 
 //            if (guardarPersona(persona)) {
@@ -70,7 +86,6 @@ public class ServletEjemplo extends HttpServlet {
         }
         out.print(salida);
     }
-
 //    public boolean guardarPersona(Persona persona) {
 //        System.out.println("Guardando Persona...");
 //        System.out.println("Nombre:   " + persona.getNombre());
