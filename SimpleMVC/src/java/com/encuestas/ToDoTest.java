@@ -1,4 +1,4 @@
-package com.sitepoint;
+package com.encuestas;
 
 import java.util.*;
 
