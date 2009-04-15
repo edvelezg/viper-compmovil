@@ -1,4 +1,4 @@
-package com.sitepoint;
+package com.encuestas;
 
 public class ToDoItem {
 	private int id;

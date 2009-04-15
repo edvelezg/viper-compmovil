@@ -1,4 +1,4 @@
-package com.sitepoint.jsp;
+package com.encuestas.jsp;
 
 public class Functions {
   public static int max(int i1, int i2) {
