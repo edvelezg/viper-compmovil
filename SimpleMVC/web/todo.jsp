@@ -39,8 +39,7 @@
             <tr>
                 <td><%= datos.getNombre()%> </td>
                 <td align="right"><%= datos.getTel()%> </td>
-                <td align="right"><%= datos.getDir()%> </td>
-                <img src="images/pic1.png" alt="Angry face" />
+                <td align="right"><img src="images/pic1.png" alt="Angry face" /> </td>
             </tr>
                     <%
             } // for (int i..
