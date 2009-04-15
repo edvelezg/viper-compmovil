@@ -15,10 +15,11 @@ public class Datos {
     private Vector aficiones;
     private int pos = 0;
 
-    public Datos(String nombre, int tel, String dir) {
+    public Datos(String nombre, int tel, String dir, int id) {
         this.nombre = nombre;
         this.tel = tel;
         this.dir = dir;
+        this.id = id;
         this.intra = "n/a";
         this.intranet = "n/a";
         this.acceso = "n/a";
@@ -89,7 +90,7 @@ public class Datos {
         this.aficiones = aficiones;
     }
     public int getId() {
-            return 5;
+            return id;
     }
 
     public String toString() {

@@ -78,11 +78,11 @@ public class ToDoList {
 					conn = DriverManager.getConnection(jdbcConnectionString);
 				}
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT nombre, telefono, imagen FROM encuestas");
+				ResultSet rs = stmt.executeQuery("SELECT nombre, telefono, imagen, id FROM encuestas");
 
 				list = new ArrayList();
 				while (rs.next()) {
-					list.add(new Datos(rs.getString(1), rs.getInt(2), rs.getString(3)));
+					list.add(new Datos(rs.getString(1), rs.getInt(2), rs.getString(3), rs.getInt(4)));
 				}
 			}
 			catch (SQLException ex) {
