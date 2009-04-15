@@ -8,7 +8,7 @@
   <uri>http://www.sitepoint.com/jsp/taglibs/functions</uri>
   <function>
     <name>max</name>
-    <function-class>com.sitepoint.jsp.Functions</function-class>
+    <function-class>com.encuestas.jsp.Functions</function-class>
     <function-signature>int max(int, int)</function-signature>
   </function>
 </taglib>
