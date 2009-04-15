@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="spfn" uri="http://www.sitepoint.com/jsp/taglibs/functions" %>
+<%@page session="true" import="java.util.*, com.sitepoint.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -13,14 +14,39 @@
         <style type="text/css">
             body { background-color:gray; font-size=10pt; }
             H1 {font-size:20pt;}
-            table {background-color:white;}
+            table {background-color:white;
+                   border-collapse: collapse; }
         </style>
     </head>
     <body>
         <H1>Entrevistas Online</H1>
         <hr/><p/>
-        <% 
+        <%
+            ToDoList toDoList = (ToDoList) getServletContext().getAttribute("toDoList");
         %>
+        <table border="1" cellpadding="2">
+            <tr>
+                <td>NOMBRE</td>
+                <td>TELEFONO</td>
+                <td>IMAGEN</td>
+            </tr>
+            <% // Scriptlet 4: display the books in the shopping cart
+            
+            List myList = toDoList.getToDoItems();
+            for (int i = 0; i < myList.size(); i++) {
+                Datos datos = (Datos) myList.get(i);
+            %>
+            <tr>
+                <td><%= datos.getNombre()%> </td>
+                <td align="right"><%= datos.getTel()%> </td>
+                <td align="right"><%= datos.getDir()%> </td>
+                <img src="images/pic1.png" alt="Angry face" />
+            </tr>
+                    <%
+            } // for (int i..
+%>
+        </table>
+        <p/>
         <c:if test="${fn:length(toDoItems) > 0}">
             <form action="<c:url value="/DeleteItem.do"/>" method="post">
                 <select name="deleteid" size="${spfn:max(2,fn:length(toDoItems))}">
