@@ -7,7 +7,12 @@ import java.io.*;
 public class DeleteToDoServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+    response.setContentType("text/html");
+    PrintWriter out = response.getWriter();
+
     String deleteid = request.getParameter("deleteid");
+
+    out.print(deleteid);
     if (deleteid != null) {
       try {
         ToDoList toDoList = (ToDoList)getServletContext().getAttribute("toDoList");
@@ -17,7 +22,7 @@ public class DeleteToDoServlet extends HttpServlet {
         throw new ServletException("Bad deleteid value submitted.", e);
       }
     }
-    response.sendRedirect("index.html");
+//    response.sendRedirect("index.html");
  
   }
 }

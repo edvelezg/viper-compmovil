@@ -55,21 +55,20 @@ public class ToDoList {
 	}
 
 	public void deleteItem(int id) {
-//		try {
-//			if (conn == null) {
-//				conn = DriverManager.getConnection(jdbcConnectionString);
-//			}
-//			PreparedStatement stmt = conn.prepareStatement(
-//					"DELETE FROM todo WHERE todoid=?");
-//			stmt.setInt(1, id);
-//			stmt.executeUpdate();
-//		}
-//		catch (SQLException ex) {
-//			System.err.println(
-//					"Error deleting a to-do list item from the database:\n" +
-//					ex.getMessage());
-//		}
-//		staleList = true;
+            try {
+                if (conn == null) {
+                    conn = DriverManager.getConnection(jdbcConnectionString);
+                }
+                PreparedStatement stmt = conn.prepareStatement(
+                        "DELETE FROM encuestas WHERE id=?");
+                stmt.setInt(1, id);
+                stmt.executeUpdate();
+            }		catch (SQLException ex) {
+			System.err.println(
+					"Error deleting a to-do list item from the database:\n" +
+					ex.getMessage());
+		}
+		staleList = true;
 	}
 
 	private void refreshList() {
