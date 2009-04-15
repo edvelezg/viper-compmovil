@@ -1,7 +1,5 @@
 package com.sitepoint;
 
-import java.awt.*;
-import java.awt.image.MemoryImageSource;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
@@ -34,45 +32,47 @@ public class ServletEjemplo extends HttpServlet {
         }
 
         try {
-//            Persona persona = new Persona();
 
+            // Get Name
             String nombre = din.readUTF();
             System.out.println("Nombre " + nombre);
 
+            // Get Phone
             String telefono = din.readUTF();
             System.out.println("Telefono " + telefono);
 
-            int width = din.readInt();
-            int height = din.readInt();
-
-            Image i;
-
-            int[] pixels = new int[width * height];
-            int c;
-            double radianConversion = Math.PI / 180.0;
-            for (int index = 0, y = 0; y < height; y++) {
-                c = ((0xff) &
-                        (byte) (Math.abs(Math.sin((y + height) * radianConversion)) * 255));
-                for (int x = 0; x < width; x++) {
-                    pixels[index++] = ((0xff << 24) | (c << 16) | (c << 8) | c);
-                }
+            // Get Image
+            int length = din.readInt();
+            byte[] rawImg = new byte[length];
+            for (int j = 0; j < length; j++) {
+                rawImg[j] = din.readByte();
             }
-            i = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(width, height, pixels, 0, width));
+            String imgDir = this.getServletContext().getRealPath("/") + "\\images";
+            File dir = new File(imgDir);
+            String filePathName = null;
+            try {
+                filePathName =  imgDir + "\\pic" + dir.list().length + ".png";
+                FileOutputStream file = new FileOutputStream(filePathName);
+//                for (int i = 0; i < rawImg.length; i++) {
+                    file.write(rawImg);
+//                }
+                file.flush();
+                file.close();
+            } catch (IOException e) {
+                System.out.println("Error--" + e.toString());
+            }
 
-            if (nombre != null) {
+            if (nombre != null && telefono != null) {
                 ToDoList toDoList = (ToDoList) getServletContext().getAttribute("toDoList");
-                toDoList.addItem(nombre, telefono);
+                toDoList.addItem(nombre, telefono, filePathName);
             }
-//            persona.setApellido(apellido);
 
-//            if (guardarPersona(persona)) {
+
             bout = new ByteArrayOutputStream();
             dos = new DataOutputStream(bout);
             dos.writeUTF("ok");
             byte[] salidaB = bout.toByteArray();
             salida = new String(salidaB);
-//            }
-
             out.print(salida);
             out.flush();
 
@@ -86,7 +86,8 @@ public class ServletEjemplo extends HttpServlet {
         }
         out.print(salida);
     }
-//    public boolean guardarPersona(Persona persona) {
+
+    //    public boolean guardarPersona(Persona persona) {
 //        System.out.println("Guardando Persona...");
 //        System.out.println("Nombre:   " + persona.getNombre());
 //        System.out.println("Apellido:     " + persona.getApellido());

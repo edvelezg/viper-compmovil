@@ -32,17 +32,18 @@ public class ToDoList {
 		return list.size();
 	}
 
-	public void addItem(String nombre, String telefono) {
+	public void addItem(String nombre, String telefono, String imagen) {
 		try {
 			if (conn == null) {
 				conn = DriverManager.getConnection(jdbcConnectionString);
 			}
                         
 			PreparedStatement stmt = conn.prepareStatement(
-					"INSERT INTO encuestas (nombre, telefono) VALUES (?, ?)");
+					"INSERT INTO encuestas (nombre, telefono, imagen) VALUES (?, ?, ?)");
 
                         stmt.setString(1, nombre);
                         stmt.setInt(2, Integer.parseInt(telefono));
+                        stmt.setString(3, imagen);
 			stmt.executeUpdate();
 		}
 		catch (SQLException ex) {
@@ -78,11 +79,11 @@ public class ToDoList {
 					conn = DriverManager.getConnection(jdbcConnectionString);
 				}
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT nombre, telefono FROM encuestas");
+				ResultSet rs = stmt.executeQuery("SELECT nombre, telefono, imagen FROM encuestas");
 
 				list = new ArrayList();
 				while (rs.next()) {
-					list.add(new Datos(rs.getString(1), rs.getInt(2)));
+					list.add(new Datos(rs.getString(1), rs.getInt(2), rs.getString(3)));
 				}
 			}
 			catch (SQLException ex) {

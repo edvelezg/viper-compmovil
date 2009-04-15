@@ -18,5 +18,6 @@ public class DeleteToDoServlet extends HttpServlet {
       }
     }
     response.sendRedirect("index.html");
+ 
   }
 }
