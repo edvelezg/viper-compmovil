@@ -19,13 +19,13 @@
     <body>
         <H1>Entrevistas Online</H1>
         <hr/><p/>
-        <% // Scriptlet 1: check whether the book list is ready
+        <% 
         %>
         <c:if test="${fn:length(toDoItems) > 0}">
             <form action="<c:url value="/DeleteItem.do"/>" method="post">
                 <select name="deleteid" size="${spfn:max(2,fn:length(toDoItems))}">
                     <c:forEach var="toDoItem" items="${toDoItems}">
-                        <option value="${toDoItem.tel}">${fn:escapeXml(toDoItem)}</option>
+                        <option value="${toDoItem.id}">${fn:escapeXml(toDoItem)}</option>
                     </c:forEach>
                 </select><br>
                 <input type="submit" value="Delete Selected Item"/>
