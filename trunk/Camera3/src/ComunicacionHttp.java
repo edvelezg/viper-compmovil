@@ -61,7 +61,7 @@ public class ComunicacionHttp {
         lectura = datos.getPngImage();
         System.out.println("INICIO");
         for (int j = 0; j < datos.getPngImage().length; j++) {
-            System.out.println(lectura[j]);
+//            System.out.println(lectura[j]);
             dos.writeByte(lectura[j]);
         }
 
