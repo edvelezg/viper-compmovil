@@ -50,8 +50,10 @@ public class ServletEjemplo extends HttpServlet {
             String imgDir = this.getServletContext().getRealPath("/") + "\\images";
             File dir = new File(imgDir);
             String filePathName = null;
+            String fileName = null;
             try {
-                filePathName =  imgDir + "\\pic" + dir.list().length + ".png";
+                fileName = "pic" + dir.list().length + ".png";
+                filePathName =  imgDir + "\\" + fileName;
                 FileOutputStream file = new FileOutputStream(filePathName);
 //                for (int i = 0; i < rawImg.length; i++) {
                     file.write(rawImg);
@@ -64,7 +66,7 @@ public class ServletEjemplo extends HttpServlet {
 
             if (nombre != null && telefono != null) {
                 ToDoList toDoList = (ToDoList) getServletContext().getAttribute("toDoList");
-                toDoList.addItem(nombre, telefono, filePathName);
+                toDoList.addItem(nombre, telefono, fileName);
             }
 
 
