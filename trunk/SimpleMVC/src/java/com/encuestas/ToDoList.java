@@ -71,6 +71,37 @@ public class ToDoList {
 		staleList = true;
 	}
 
+        public List selectItem(String word) {
+
+            ArrayList list = new ArrayList();
+            
+            try {
+                
+                if (conn == null) {
+                    conn = DriverManager.getConnection(jdbcConnectionString);
+                }
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT nombre, telefono, imagen, id FROM encuestas WHERE nombre='" + word + "'");
+
+                list = new ArrayList();
+                while (rs.next()) {
+                        list.add(new Datos(rs.getString(1), rs.getInt(2), rs.getString(3), rs.getInt(4)));
+                }
+//                ResultSet rs = stmt.getResultSet();
+//                list.add(new Datos("Becky", 451212, "Doh", 15));
+//                while (rs.next()) {
+//                        list.add(new Datos(rs.getString(1), rs.getInt(2), rs.getString(3), rs.getInt(4)));
+//                }
+
+            }  catch (SQLException ex) {
+			System.err.println(
+					"Error deleting a to-do list item from the database:\n" +
+					ex.getMessage());
+                                        list.add(new Datos("Becky", 9999, "Doh", 15));
+            }
+            return list;
+	}
+
 	private void refreshList() {
 		if (staleList) {
 			try {
