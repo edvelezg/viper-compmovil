@@ -86,6 +86,7 @@ public class LookupServlet extends HttpServlet {
 //                    dos.writeUTF(datos.getIntra());
 //                    dos.writeUTF(datos.getIntranet());
 //                    dos.writeUTF(datos.getAcceso());
+//                    dos.writeUTF(datos.getMapa());
                    dos.writeUTF(datos.getImagen());
 
                 }
