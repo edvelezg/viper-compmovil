@@ -63,11 +63,12 @@ public class ComunicacionHttp {
 //            System.out.println(lectura[j]);
             dos.writeByte(pngImage[j]);
         }
+
         byte[] pngMap;
         dos.writeInt(datos.getPngMap().length);
         pngMap = datos.getPngMap();
-        System.out.println("INICIO MAPA");
-        for (int j = 0; j < datos.getPngMap().length; j++) {
+        System.out.println("L: " +  pngMap.length);
+        for (int j = 0; j < pngMap.length; j++) {
 //            System.out.println(lectura[j]);
             dos.writeByte(pngMap[j]);
         }
@@ -89,6 +90,7 @@ public class ComunicacionHttp {
             ByteArrayInputStream bin = new ByteArrayInputStream(buf);
             DataInputStream dis = new DataInputStream(bin);
             String conf = dis.readUTF();
+            System.out.println("conf: " + conf);
             if (conf.equals("ok")) {
                 Alert a = new Alert("Info", "Envio exitoso", null, AlertType.CONFIRMATION);
                 a.setTimeout(1000);
