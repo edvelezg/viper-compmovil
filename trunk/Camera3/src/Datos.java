@@ -29,15 +29,44 @@ public class Datos {
     private Image imagen;
     byte[] pngImage;
 
-    public Datos(String nombre, String tel, String dir, String intra, String intranet, String acceso,Image imagen,byte[] pngImage) {
+    /*-->*/
+    private Image mapa;
+    /*-->*/
+    byte[] pngMap;
+
+    /*-->*/
+    public Datos(String nombre, String tel, String dir, String intra, String intranet, String acceso, Image imagen, byte[] pngImage, Image mapa, byte[] pngMap) {
         this.nombre = nombre;
         this.tel = tel;
         this.dir = dir;
         this.intra = intra;
         this.intranet = intranet;
         this.acceso = acceso;
-        this.imagen=imagen;
-        this.pngImage=pngImage;
+        this.imagen = imagen;
+        this.pngImage = pngImage;
+
+        /*-->*/ this.mapa = mapa;
+        this.pngMap = pngMap;
+    }
+
+    /*-->*/
+    public void setMapa(Image mapa) {
+        this.mapa = mapa;
+    }
+
+    /*-->*/
+    public void setPngMap(byte[] pngMap) {
+        this.pngMap = pngMap;
+    }
+
+    /*-->*/
+    public Image getMapa() {
+        return mapa;
+    }
+
+    /*-->*/
+    public byte[] getPngMap() {
+        return pngMap;
     }
 
     public String getNombre() {
@@ -63,17 +92,21 @@ public class Datos {
     public String getAcceso() {
         return acceso;
     }
-    public Image getImagen(){
+
+    public Image getImagen() {
         return imagen;
     }
-    public byte[] getPngImage(){
+
+    public byte[] getPngImage() {
         return pngImage;
     }
-    public void setImagen(Image imagen){
-        this.imagen=imagen;
+
+    public void setImagen(Image imagen) {
+        this.imagen = imagen;
     }
-     public void setPngImage(byte[] pngImage){
-        this.pngImage=pngImage;
+
+    public void setPngImage(byte[] pngImage) {
+        this.pngImage = pngImage;
     }
 
     public void setNombre(String nombre) {

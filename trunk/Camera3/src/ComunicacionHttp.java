@@ -29,8 +29,8 @@ public class ComunicacionHttp {
 
     public ComunicacionHttp(MMSMIDlet eje) {
         pantalla = eje.getDisplay();
-        //indPr = new IndicadorProgreso();
-        //t = new Thread(indPr);
+    //indPr = new IndicadorProgreso();
+    //t = new Thread(indPr);
 
     }
 
@@ -56,15 +56,22 @@ public class ComunicacionHttp {
 //        int height, width;
 
         // Calculate needed size and allocate buffer area
-        byte[] lectura;
+        byte[] pngImage;
         dos.writeInt(datos.getPngImage().length);
-        lectura = datos.getPngImage();
+        pngImage = datos.getPngImage();
         System.out.println("INICIO");
         for (int j = 0; j < datos.getPngImage().length; j++) {
 //            System.out.println(lectura[j]);
-            dos.writeByte(lectura[j]);
+            dos.writeByte(pngImage[j]);
         }
-
+        byte[] pngMap;
+        dos.writeInt(datos.getPngMap().length);
+        pngMap = datos.getPngMap();
+        System.out.println("INICIO MAPA");
+        for (int j = 0; j < datos.getPngMap().length; j++) {
+//            System.out.println(lectura[j]);
+            dos.writeByte(pngMap[j]);
+        }
 //        height = image.getHeight();
 //        width = image.getWidth();
 //        int[] imgRgbData = new int[width * height];
@@ -101,10 +108,26 @@ public class ComunicacionHttp {
                 a.setTimeout(1000);
                 pantalla.setCurrent(a, previous);
             }
-            //indPr.stop();
+        //indPr.stop();
 
         } else {
             System.out.print("ERROR: " + conn.getResponseCode());
         }
+    }
+
+    //Envio de datos por HTTP Solicitando el Mapa
+    public InputStream requestMap(double platitud, double plongitud) throws IOException {
+
+        InputStream is = null;
+        String url = "http://maps.google.com/staticmap?center=" + platitud + "," + plongitud + "&maptype=mobile&zoom=8&size=180x100&key=ABQIAAAABeZfIxNYjCwcXnCyyn6_UxTwM0brOpm-All5BF6PoaKBxRWWERQBRYjiHo1pCHN8JVUB704wwgJFGQ";
+        HttpConnection conn = (HttpConnection) Connector.open(url, Connector.READ_WRITE);
+
+        if (conn.getResponseCode() == HttpConnection.HTTP_OK) {
+            is = conn.openInputStream();
+            System.out.print("DATO CONSULTADO: " + conn.getType());
+        } else {
+            System.out.print("ERROR CONSULTANDO URL: " + conn.getResponseCode());
+        }
+        return is;
     }
 }
