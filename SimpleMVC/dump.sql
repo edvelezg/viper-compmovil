@@ -14,7 +14,7 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
+                
 --
 -- Current Database: `todo`
 --
@@ -33,7 +33,12 @@ SET character_set_client = utf8;
 CREATE TABLE `encuestas` (
   `nombre` varchar(255) DEFAULT NULL,
   `telefono` int(11) DEFAULT NULL,
+  `direccion` varchar(255) DEFAULT NULL,
+  `intra` varchar(255) DEFAULT NULL,
+  `intranet` varchar(255) DEFAULT NULL,
+  `acceso` varchar(255) DEFAULT NULL,
   `imagen` varchar(1000) DEFAULT NULL,
+  `mapa` varchar(1000) DEFAULT NULL,
   `id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
