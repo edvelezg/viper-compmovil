@@ -27,13 +27,14 @@ public class Lookup extends Thread {
     String error = "";
     double latitud = 0;
     double longitud = 0;
-    int tel=0;
+    int tel = 0;
     private ComunicacionHttp http;
     MMSMIDlet padre = null;
     private java.io.InputStream is = null;
     private final Command exitCommand;
-    String nombre, conf,imagen;
-    public      ImageItem imageItem;
+    String nombre, dir, intr, intra, acces, conf, imagen, map;
+    public ImageItem imageItem,  imageItem1;
+
     public Lookup(MMSMIDlet eje) {
         http = new ComunicacionHttp(eje);
         padre = eje;
@@ -45,10 +46,10 @@ public class Lookup extends Thread {
         String word = padre.buscanombre.getString();
         String definition;
         try {
-             
+
             definition = lookUp(word);
-              
-              
+
+
         } catch (IOException ioe) {
 //          if(!word.equals(nombre)){
 //            Alert report = new Alert(
@@ -61,53 +62,55 @@ public class Lookup extends Thread {
 //            return;
 //          }
         }
-        Alert al=new Alert("Leyendo....");
+        Alert al = new Alert("Leyendo....");
         al.setTimeout(Alert.FOREVER);
-              Display.getDisplay(padre).setCurrent(al);
-      // if(word.equals(nombre)){
-       padre.form1.deleteAll();
-//          padre.form1.delete(0);
-                padre.form1.insert(0,imageItem);
+        Display.getDisplay(padre).setCurrent(al);
+        // if(word.equals(nombre)){
+        padre.form1.deleteAll();
+        padre.form1.insert(0, imageItem);
+        padre.form1.insert(1, imageItem1);
         padre.nombre1.setString(nombre);
         padre.tel1.setString(String.valueOf(tel));
-        padre.dir1.setString(conf);
-
+        padre.dir1.setString(dir);
+        if (intr.equals(padre.intra1.getString(0))) {
+            padre.intra1.setSelectedIndex(0, true);
+        } else {
+            padre.intra1.setSelectedIndex(1, true);
+        }
+        if (intra.equals(padre.intranet1.getString(0))) {
+            padre.intranet1.setSelectedIndex(0, true);
+        } else if (intra.equals(padre.intranet1.getString(1))) {
+            padre.intranet1.setSelectedIndex(1, true);
+        } else if (intra.equals(padre.intranet1.getString(2))) {
+            padre.intranet1.setSelectedIndex(2, true);
+        } else {
+            padre.intranet1.setSelectedIndex(3, true);
+        }
+        if (acces.equals(padre.acceso1.getString(0))) {
+            padre.acceso1.setSelectedIndex(0, true);
+        } else if (acces.equals(padre.acceso1.getString(1))) {
+            padre.acceso1.setSelectedIndex(1, true);
+        } else if (acces.equals(padre.acceso1.getString(2))) {
+            padre.acceso1.setSelectedIndex(2, true);
+        } else {
+            padre.acceso1.setSelectedIndex(3, true);
+        }
         padre.form1.append(padre.nombre1);
         padre.form1.append(padre.tel1);
         padre.form1.append(padre.dir1);
+        padre.form1.append(padre.intra1);
+        padre.form1.append(padre.intranet1);
+        padre.form1.append(padre.acceso1);
         Display.getDisplay(padre).setCurrent(padre.form1);
 //        }else{
 //
-//            Alert report = new Alert("La encuesta no fue encontrada.");
-//            //report.setTimeout(Alert.);
-//            Display.getDisplay(padre).setCurrent(report);
-//        }
-//        Alert results = new Alert("Definition", definition,
-//                null, null);
-//        results.setTimeout(Alert.FOREVER);
-//        Display.getDisplay(padre).setCurrent(results);
-//        try {
-//
-//            is = http.requestMap(latitud, longitud);
-//            Image im = Image.createImage(is);
-//            im=createThumbnail(im);
-//            ImageItem map=new ImageItem("",im,ImageItem.LAYOUT_TOP | ImageItem.LAYOUT_RIGHT,null);
-//            Form f = new Form("Results");
-//            padre.mapa=im;
-//            padre.form.delete(1);
-//            padre.form.insert(1, map);
-//            Display.getDisplay(padre).setCurrent(padre.form);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+
     }
 
     private String lookUp(String word) throws IOException {
         HttpConnection hc = null;
         InputStream in = null;
         String definition = null;
-        String imagen = null;
         try {
             String baseURL = "http://localhost:8080/SimpleMVC/lookup?nombre=";
             String url = baseURL + word;
@@ -137,12 +140,22 @@ public class Lookup extends Thread {
             DataInputStream dis = new DataInputStream(bin);
             nombre = dis.readUTF();
             tel = dis.readInt();
+            dir = dis.readUTF();
+            intr = dis.readUTF();
+            intra = dis.readUTF();
+            acces = dis.readUTF();
             imagen = dis.readUTF();
+            map = dis.readUTF();
             System.out.println("name:" + nombre);
             System.out.println("tel:" + tel);
+            System.out.println("direccion:" + dir);
+            System.out.println("Intranet:" + intr);
+            System.out.println("intra rapido:" + intra);
+            System.out.println("intra acceso:" + acces);
+            System.out.println("mapa hp:" + map);
             System.out.println("imagen:" + imagen);
 
-            //indPr.stop();
+        //indPr.stop();
 //            byte[] raw = new byte[contentLength];
 //            int length = in.read(raw);
 //            // Clean up.
@@ -161,7 +174,7 @@ public class Lookup extends Thread {
             }
         }
 
-       // imagen = "mapa2.png";
+        // imagen = "mapa2.png";
         if (imagen != null && imagen.length() != 0) {
             /* Imagen **/
             DataInputStream in2 = null;
@@ -192,9 +205,63 @@ public class Lookup extends Thread {
                     length = index;
                 }
                 Image image = Image.createImage(data, 0, length);
-                image=createThumbnail(image);
+                image = createThumbnail(image);
                 imageItem = new ImageItem(null, image, 0, null);
-              
+                 System.out.println(imageItem);
+//                mProgressForm.setTitle("Done.");
+          } catch (IOException ioe) {
+//                StringItem stringItem = new StringItem(null, ioe.toString());
+//                mProgressForm.append(stringItem);
+//                mProgressForm.setTitle("Done.");
+            } finally {
+                try {
+                    if (in2 != null) {
+                        in2.close();
+
+                    }
+                    if (hc != null) {
+                        hc.close();
+
+                    }
+                } catch (IOException ioe) {
+                }
+            }
+        }
+        System.out.println(map);
+        if (map != null && map.length() != 0) {
+            /* Imagen **/
+            DataInputStream in2 = null;
+            try {
+                String url = "http://localhost:8080/SimpleMVC/images/" + map;
+                hc = (HttpConnection) Connector.open(url);
+                int length = (int) hc.getLength();
+                byte[] data = null;
+                if (length != -1) {
+                    data = new byte[length];
+                    in2 = new DataInputStream(hc.openInputStream());
+                    in2.readFully(data);
+                } else {
+                    int chunkSize = 512;
+                    int index = 0;
+                    int readLength = 0;
+                    in2 = new DataInputStream(hc.openInputStream());
+                    data = new byte[chunkSize];
+                    do {
+                        if (data.length < index + chunkSize) {
+                            byte[] newData = new byte[index + chunkSize];
+                            System.arraycopy(data, 0, newData, 0, data.length);
+                            data = newData;
+                        }
+                        readLength = in2.read(data, index, chunkSize);
+                        index += readLength;
+                    } while (readLength == chunkSize);
+                    length = index;
+                }
+                Image image = Image.createImage(data, 0, length);
+                image = createThumbnail(image);
+                imageItem1 = new ImageItem(null, image, 0, null);
+                System.out.println(imageItem1);
+
 //                mProgressForm.setTitle("Done.");
             } catch (IOException ioe) {
 //                StringItem stringItem = new StringItem(null, ioe.toString());
@@ -214,6 +281,7 @@ public class Lookup extends Thread {
         }
         return definition;
     }
+
     private Image createThumbnail(Image image) {
         int sourceWidth = image.getWidth();
         int sourceHeight = image.getHeight();

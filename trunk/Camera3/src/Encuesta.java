@@ -62,29 +62,31 @@ public class Encuesta {
             dout.writeInt(height);
             dout.writeLong(System.currentTimeMillis());
             dout.writeInt(imgRgbData.length);
+
             //  Serialize the image raw data
             for (int i = 0; i < imgRgbData.length; i++) {
                 dout.writeInt(imgRgbData[i]);
             }
+
             dout.writeInt(d.getPngImage().length);
             pngImage = d.getPngImage();
-            System.out.println("almacenar:prim:ult:" + pngImage[0] + " " + pngImage[pngImage.length - 1]);
             for (int j = 0; j < d.getPngImage().length; j++) {
                 dout.writeByte(pngImage[j]);
             }
+
             dout.writeInt(h);
             dout.writeInt(w);
             dout.writeLong(System.currentTimeMillis());
             dout.writeInt(imgMap.length);
+            System.out.println("imgMap.length: " + imgMap.length);
             for (int i = 0; i < imgMap.length; i++) {
                 dout.writeInt(imgMap[i]);
-                System.out.println(imgMap[i]);
             }
             dout.writeInt(d.getPngMap().length);
             pngMap = d.getPngMap();
-            System.out.println("almacenar:prim:ult:" + pngImage[0] + " " + pngImage[pngImage.length - 1]);
+            System.out.println("almacenaEncuesta: " + d.getPngMap().length);
             for (int j = 0; j < d.getPngMap().length; j++) {
-                System.out.println(pngMap[j]);
+//                System.out.println(pngMap[j]);
                 dout.writeByte(pngMap[j]);
             }
             dout.flush();
@@ -185,7 +187,6 @@ public class Encuesta {
             pngImage = d.getPngImage();
             System.out.println("almacenar:prim:ult:" + pngImage[0] + " " + pngImage[pngImage.length - 1]);
             for (int j = 0; j < d.getPngImage().length; j++) {
-//               System.out.println(lectura[j]);
                 dos.writeByte(pngImage[j]);
             }
             dos.writeInt(h);
@@ -199,7 +200,6 @@ public class Encuesta {
             pngMap = d.getPngMap();
             System.out.println("almacenar:prim:ult:" + pngImage[0] + " " + pngImage[pngImage.length - 1]);
             for (int j = 0; j < d.getPngMap().length; j++) {
-//               System.out.println(lectura[j]);
                 dos.writeByte(pngMap[j]);
             }
             dos.flush();
