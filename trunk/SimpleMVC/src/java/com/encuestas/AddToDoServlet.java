@@ -14,7 +14,7 @@ public class AddToDoServlet extends HttpServlet {
     
     if (nombre != null && telefono != null) {
       ToDoList toDoList = (ToDoList)getServletContext().getAttribute("toDoList");
-      toDoList.addItem(nombre, telefono, imagen);
+//      toDoList.addItem(nombre, telefono, imagen);
     }
     response.sendRedirect("index.html");
   }

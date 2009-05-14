@@ -11,6 +11,7 @@ import javax.servlet.http.*;
 import javax.servlet.*;
 
 public class LookupServlet extends HttpServlet {
+
     private DataOutputStream dos;
     private ByteArrayOutputStream bout;
 
@@ -23,11 +24,11 @@ public class LookupServlet extends HttpServlet {
         String salida = null;
         bout = null;
         dos = null;
-        
+
         bout = new ByteArrayOutputStream();
         dos = new DataOutputStream(bout);
-        
-        String word = request.getParameter("word");
+
+        String word = request.getParameter("nombre");
 
         String message;
 
@@ -42,10 +43,10 @@ public class LookupServlet extends HttpServlet {
         }
 
         if (message == null || message.length() == 0) {
-            message = "Nothing Found!";
+            message = "No se encontro Nada!";
         }
-        
-        dos.writeUTF("ok");
+
+//        dos.writeUTF("ok");
         byte[] salidaB = bout.toByteArray();
         salida = new String(salidaB);
         PrintWriter out = response.getWriter();
@@ -62,7 +63,7 @@ public class LookupServlet extends HttpServlet {
 
     public String lookUp(String word) throws IOException {
 
-        String info = "";
+        String info = null;
 
 //    HttpConnection conn = (HttpConnection) Connector.open(url, Connector.READ_WRITE);
 //        conn.setRequestMethod(HttpConnection.POST);
@@ -72,15 +73,17 @@ public class LookupServlet extends HttpServlet {
 //
 //        dos.writeUTF(datos.getNombre());
 //        dos.writeUTF(datos.getTel());
-
         try {
             ToDoList toDoList = (ToDoList) getServletContext().getAttribute("toDoList");
 
             List myList = toDoList.selectItem(word);
-            for (int i = 0; i < myList.size(); i++) {
-                Datos datos = (Datos) myList.get(i);
-                dos.writeUTF(datos.getNombre());
-                dos.writeInt(datos.getTel());
+            if (myList.size() != 0) {
+                for (int i = 0; i < myList.size(); i++) {
+                    Datos datos = (Datos) myList.get(i);
+                    dos.writeUTF(datos.getNombre());
+                    dos.writeInt(datos.getTel());
+                    dos.writeUTF(datos.getDir());
+                }
             }
 
         } finally {
