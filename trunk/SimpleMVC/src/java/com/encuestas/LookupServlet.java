@@ -82,7 +82,12 @@ public class LookupServlet extends HttpServlet {
                     Datos datos = (Datos) myList.get(i);
                     dos.writeUTF(datos.getNombre());
                     dos.writeInt(datos.getTel());
-                    dos.writeUTF(datos.getDir());
+//                    dos.writeUTF(datos.getDir());
+//                    dos.writeUTF(datos.getIntra());
+//                    dos.writeUTF(datos.getIntranet());
+//                    dos.writeUTF(datos.getAcceso());
+                   dos.writeUTF(datos.getImagen());
+
                 }
             }
 
