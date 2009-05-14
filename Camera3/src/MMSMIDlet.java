@@ -37,7 +37,7 @@ public class MMSMIDlet
     byte[] pngMap;
     int cont = 0;
     public TextField nombre,  tel,  dir,  buscanombre,  nombre1,  tel1,  dir1;
-    private ChoiceGroup intra,  intranet,  acceso,  intra1,  intranet1,  acceso1;
+    public ChoiceGroup intra,  intranet,  acceso,  intra1,  intranet1,  acceso1;
     private List lista;
     private Vector dato;
     /*-->*/
@@ -122,8 +122,6 @@ public class MMSMIDlet
 
 
     }
-
-
 
     public void run() {
         try {
@@ -337,7 +335,7 @@ public class MMSMIDlet
         } else {
             access = acceso.getString(3);
         }
-        //form.deleteAll();
+//        form.deleteAll();
         form.delete(0);
         form.insert(0, imgItem);
         //form.append(imgItem);
@@ -354,7 +352,7 @@ public class MMSMIDlet
             //RecordStore.deleteRecordStore("personas");
             RecordStore rstore = RecordStore.openRecordStore("datos", true);
             //RecordStore.deleteRecordStore("personas");
-            persona=persona.toUpperCase();
+            persona = persona.toUpperCase();
 
             RecordEnumeration re = rstore.enumerateRecords(null, null, true);
 
@@ -363,7 +361,7 @@ public class MMSMIDlet
                 ByteArrayInputStream bais = new ByteArrayInputStream(b);
                 DataInputStream dis = new DataInputStream(bais);
                 String nombre = dis.readUTF();
-                nombre=nombre.toUpperCase();
+                nombre = nombre.toUpperCase();
 //                int pos = dis.readInt();
 //                this.posicion = pos;
                 if (nombre.equals(persona)) {

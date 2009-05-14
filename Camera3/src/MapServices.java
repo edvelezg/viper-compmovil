@@ -1,37 +1,40 @@
+
 import javax.microedition.location.*;
 import javax.microedition.lcdui.*;
+
 /**
  *
  * @author Andres Sierra
  */
 public class MapServices extends Thread {
-    
-    String error    = "";
-    double latitud  = 0;
+
+    String error = "";
+    double latitud = 0;
     double longitud = 0;
     private ComunicacionHttp http;
     MMSMIDlet padre = null;
     private java.io.InputStream is = null;
     private final Command exitCommand;
 
-    public MapServices (MMSMIDlet eje){
+    public MapServices(MMSMIDlet eje) {
         http = new ComunicacionHttp(eje);
         padre = eje;
         exitCommand = new Command("Salir", Command.EXIT, 1);
     }
+
     public void run() {
         try {
             this.localizar();
             is = http.requestMap(latitud, longitud);
             Image im = Image.createImage(is);
-            im=createThumbnail(im);
-            ImageItem map=new ImageItem("",im,ImageItem.LAYOUT_TOP | ImageItem.LAYOUT_RIGHT,null);
+            im = createThumbnail(im);
+            ImageItem map = new ImageItem("", im, ImageItem.LAYOUT_TOP | ImageItem.LAYOUT_RIGHT, null);
             Form f = new Form("Results");
-            padre.mapa=im;
+            padre.mapa = im;
             padre.form.delete(1);
             padre.form.insert(1, map);
             Display.getDisplay(padre).setCurrent(padre.form);
-            java.io.InputStream isTemp =  http.requestMap(latitud, longitud);
+            java.io.InputStream isTemp = http.requestMap(latitud, longitud);
             final int MAX_LENGTH = isTemp.available();
             byte[] bufMap = new byte[MAX_LENGTH];
             int total = 0;
@@ -43,17 +46,20 @@ public class MapServices extends Thread {
                 }
                 total += count;
             }
+
             isTemp.close();
-            for(int i=0;i<MAX_LENGTH;i++){
-                System.out.println(bufMap[i]);
-            }
-            padre.pngMap=bufMap;
+//            for (int i = 0; i < MAX_LENGTH; i++) {
+//                System.out.println(bufMap[i]);
+//            }
+            padre.pngMap = bufMap;
+            System.out.println("tamano padrepadre.pngMap.length: " + padre.pngMap.length);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-     }
-     private Image createThumbnail(Image image) {
+    }
+
+    private Image createThumbnail(Image image) {
         int sourceWidth = image.getWidth();
         int sourceHeight = image.getHeight();
 
@@ -81,39 +87,45 @@ public class MapServices extends Thread {
         return immutableThumb;
     }
 
-     private void localizar(){
+    private void localizar() {
         LocationProvider lp = null;
-		javax.microedition.location.Location location = null;
-        try{ lp = LocationProvider.getInstance(null);
-             location = lp.getLocation(-1); // Timeout
-		}catch(LocationException e){ addError(e); }
-         catch(InterruptedException e){ addError(e); }
+        javax.microedition.location.Location location = null;
+        try {
+            lp = LocationProvider.getInstance(null);
+            location = lp.getLocation(-1); // Timeout
+        } catch (LocationException e) {
+            addError(e);
+        } catch (InterruptedException e) {
+            addError(e);
+        }
 
-        String res="[RESULTADOS DE LA BUSQUEDA]\n";
-		try{
+        String res = "[RESULTADOS DE LA BUSQUEDA]\n";
+        try {
             Coordinates coordinates = location.getQualifiedCoordinates();
-			res+="Altitude:"+coordinates.getAltitude()+"\n";
-			res+="Latitude:"+coordinates.getLatitude()+"\n";
-			res+="Longitude:"+coordinates.getLongitude()+"\n";
-            latitud  = coordinates.getLatitude();
+            res += "Altitude:" + coordinates.getAltitude() + "\n";
+            res += "Latitude:" + coordinates.getLatitude() + "\n";
+            res += "Longitude:" + coordinates.getLongitude() + "\n";
+            latitud = coordinates.getLatitude();
             longitud = coordinates.getLongitude();
             System.out.println("RESULTADOS PUNTOS: " + res);
-		}catch(Exception e){ addError(e); }
+        } catch (Exception e) {
+            addError(e);
+        }
         try {
             http.requestMap(latitud, longitud);
         } catch (Exception e) {
             e.printStackTrace();
         }
-      /*  Form f = new Form("Results");
+        /*  Form f = new Form("Results");
         f.append(res);
-		f.append(error);
+        f.append(error);
         //displayMapa.setCurrent(f);
         Display.getDisplay(padre).setCurrent(f); */
     }
 
-    void addError(Exception e){
+    void addError(Exception e) {
         e.printStackTrace();
-        error+=e.getMessage()+"\n";
+        error += e.getMessage() + "\n";
     }
 
     public void commandAction(Command c, Displayable d) {

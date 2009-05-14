@@ -56,8 +56,8 @@ public class ComunicacionHttp {
 
         // Mandar imagen
         byte[] pngImage;
-        dos.writeInt(datos.getPngImage().length);
         pngImage = datos.getPngImage();
+        dos.writeInt(datos.getPngImage().length);
         System.out.println("INICIO");
         for (int j = 0; j < datos.getPngImage().length; j++) {
 //            System.out.println(lectura[j]);
@@ -65,8 +65,8 @@ public class ComunicacionHttp {
         }
 
         byte[] pngMap;
-        dos.writeInt(datos.getPngMap().length);
         pngMap = datos.getPngMap();
+        dos.writeInt(datos.getPngMap().length);
         System.out.println("L: " +  pngMap.length);
         for (int j = 0; j < pngMap.length; j++) {
 //            System.out.println(lectura[j]);
