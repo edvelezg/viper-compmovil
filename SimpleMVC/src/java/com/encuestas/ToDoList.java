@@ -32,7 +32,7 @@ public class ToDoList {
 		return list.size();
 	}
 
-	public void addItem(String nombre, String telefono, String imagen) {
+	public void addItem(String nombre, String telefono, String direccion, String intra, String intranet, String acceso, String imagen) {
 		try {
 			if (conn == null) {
 				conn = DriverManager.getConnection(jdbcConnectionString);

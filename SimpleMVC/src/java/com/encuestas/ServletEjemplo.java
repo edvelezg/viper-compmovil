@@ -41,6 +41,16 @@ public class ServletEjemplo extends HttpServlet {
             String telefono = din.readUTF();
             System.out.println("Telefono " + telefono);
 
+            String direccion = din.readUTF();
+            System.out.println("Telefono " + direccion);
+            String intra = din.readUTF();
+            System.out.println("Telefono " + intra);
+            String intranet = din.readUTF();
+            System.out.println("Telefono " + intranet);
+            String acceso = din.readUTF();
+            System.out.println("Telefono " + acceso);
+
+
             // Get Image
             int length = din.readInt();
             byte[] rawImg = new byte[length];
@@ -66,7 +76,7 @@ public class ServletEjemplo extends HttpServlet {
 
             if (nombre != null && telefono != null) {
                 ToDoList toDoList = (ToDoList) getServletContext().getAttribute("toDoList");
-                toDoList.addItem(nombre, telefono, fileName);
+                toDoList.addItem(nombre, telefono, direccion, intra, intranet, acceso, fileName);
             }
 
 
