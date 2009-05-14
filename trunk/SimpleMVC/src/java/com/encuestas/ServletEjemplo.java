@@ -47,6 +47,7 @@ public class ServletEjemplo extends HttpServlet {
 
             // Get Image
             int length = din.readInt();
+            System.out.print("length " + length);
             byte[] rawImg = new byte[length];
             for (int j = 0; j < length; j++) {
                 rawImg[j] = din.readByte();
@@ -55,6 +56,7 @@ public class ServletEjemplo extends HttpServlet {
 
             // Get Map
             int mapLength = din.readInt();
+            System.out.print("mapLength " + mapLength);
             byte[] rawMap = new byte[mapLength];
             for (int j = 0; j < mapLength; j++) {
                 rawMap[j] = din.readByte();
@@ -87,15 +89,15 @@ public class ServletEjemplo extends HttpServlet {
         out.print(salida);
     }
 
-    public String saveMap(byte[] rawImg) {
+    public String saveMap(byte[] rawMap) {
         String filePathName = null;
         String fileName = null;
         try {
             fileName = "map" + dir.list().length + ".gif";
             filePathName = imgDir + "\\" + fileName;
             FileOutputStream file = new FileOutputStream(filePathName);
-//                for (int i = 0; i < rawImg.length; i++) {
-            file.write(rawImg);
+//                for (int i = 0; i < rawMap.length; i++) {
+            file.write(rawMap);
 //                }
             file.flush();
             file.close();
@@ -112,7 +114,7 @@ public class ServletEjemplo extends HttpServlet {
             fileName = "pic" + dir.list().length + ".png";
             filePathName = imgDir + "\\" + fileName;
             FileOutputStream file = new FileOutputStream(filePathName);
-//                for (int i = 0; i < rawImg.length; i++) {
+//                for (int i = 0; i < rawMap.length; i++) {
             file.write(rawImg);
 //                }
             file.flush();
