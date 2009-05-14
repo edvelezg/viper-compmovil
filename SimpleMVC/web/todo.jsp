@@ -28,7 +28,12 @@
             <tr>
                 <td>NOMBRE</td>
                 <td>TELEFONO</td>
+                <td>DIRECCION</td>
+                <td>INTERNET</td>
+                <td>SERVICIO</td>
+                <td>ACCESO</td>
                 <td>IMAGEN</td>
+                <td>MAPA</td>
             </tr>
             <% // Scriptlet 4: display the books in the shopping cart
             
@@ -38,8 +43,13 @@
             %>
             <tr>
                 <td><%= datos.getNombre()%> </td>
-                <td align="right"><%= datos.getTel()%> </td>
-                <td align="right"><img src="images/<%= datos.getDir()%>" alt="Angry face" /> </td>
+                <td align="center"><%= datos.getTel()%> </td>
+                <td align="center"><%= datos.getDir()%> </td>
+                <td align="center"><%= datos.getIntra()%> </td>
+                <td align="center"><%= datos.getIntranet()%> </td>
+                <td align="center"><%= datos.getAcceso()%> </td>
+                <td align="center"><img src="images/<%= datos.getImagen()%>" alt="Angry face" /> </td>
+                <td align="center"><img src="images/<%= datos.getMapa()%>" alt="Angry face" /> </td>
             </tr>
                     <%
             } // for (int i..
