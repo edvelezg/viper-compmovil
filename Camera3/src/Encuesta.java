@@ -48,14 +48,16 @@ public class Encuesta {
             //
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             DataOutputStream dout = new DataOutputStream(bout);
-            //  Serialize the image name
-//            dout.writeUTF(resourceName);
+
+            // Mando Datos
             dout.writeUTF(d.getNombre());
             dout.writeUTF(d.getTel());
             dout.writeUTF(d.getDir());
             dout.writeUTF(d.getIntra());
             dout.writeUTF(d.getIntranet());
             dout.writeUTF(d.getAcceso());
+
+            // Mando Imagen
             dout.writeInt(width);
             dout.writeInt(height);
             dout.writeLong(System.currentTimeMillis());
@@ -63,7 +65,6 @@ public class Encuesta {
             //  Serialize the image raw data
             for (int i = 0; i < imgRgbData.length; i++) {
                 dout.writeInt(imgRgbData[i]);
-//                System.out.println(imgRgbData[i]);
             }
             dout.writeInt(d.getPngImage().length);
             pngImage = d.getPngImage();

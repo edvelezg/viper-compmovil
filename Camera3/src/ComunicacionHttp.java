@@ -49,13 +49,12 @@ public class ComunicacionHttp {
 
         dos.writeUTF(datos.getNombre());
         dos.writeUTF(datos.getTel());
+        dos.writeUTF(datos.getDir());
+        dos.writeUTF(datos.getIntra());
+        dos.writeUTF(datos.getIntranet());
+        dos.writeUTF(datos.getAcceso());
 
         // Mandar imagen
-//        Image image = datos.getImagen();
-
-//        int height, width;
-
-        // Calculate needed size and allocate buffer area
         byte[] pngImage;
         dos.writeInt(datos.getPngImage().length);
         pngImage = datos.getPngImage();
@@ -72,20 +71,7 @@ public class ComunicacionHttp {
 //            System.out.println(lectura[j]);
             dos.writeByte(pngMap[j]);
         }
-//        height = image.getHeight();
-//        width = image.getWidth();
-//        int[] imgRgbData = new int[width * height];
-//        image.getRGB(imgRgbData, 0, width, 0, 0, width, height);
-//        dos.writeInt(width);
-//        dos.writeInt(height);
-//        dos.writeLong(System.currentTimeMillis());
-//        dos.writeInt(imgRgbData.length);
-//        //  Serialize the image raw data
-//        for (int i = 0; i < imgRgbData.length; i++) {
-//            dos.writeInt(imgRgbData[i]);
-//            System.out.println(imgRgbData[i]);
-//        }
-
+        
         if (conn.getResponseCode() == HttpConnection.HTTP_OK) {
             //Abrir Streams de entrada para la captura de la respuesta
             InputStream is = conn.openInputStream();

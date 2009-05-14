@@ -3,12 +3,8 @@
  * and open the template in the editor.
  */
 
-import com.sun.midp.io.j2me.storage.File;
-import com.sun.perseus.platform.BufferedInputStream;
 import java.io.*;
 import java.util.Vector;
-import javax.microedition.io.Connector;
-import javax.microedition.io.HttpConnection;
 import javax.microedition.midlet.*;
 import javax.microedition.lcdui.*;
 import javax.microedition.rms.RecordEnumeration;
@@ -287,7 +283,7 @@ public class MMSMIDlet
                     // this may be called multiple times if
                     // multiple messages arrive simultaneously
                     if (incomingMessage != null) {
-//            receive(incomingMessage);
+//            receive(incomingMessage);   
                     }
                 } catch (IOException ioe) {
                     showError("Exception while receiving message: " + ioe.getMessage());
@@ -701,6 +697,10 @@ public class MMSMIDlet
             mapa = datos.getMapa();
             d.setNombre(nomb);
             d.setTel(tele);
+            d.setDir(direccion);
+            d.setIntra(it);
+            d.setIntranet(in);
+            d.setAcceso(access);
             d.setImagen(img);
             d.setPngImage(datos.getPngImage());
             d.setMapa(mapa);
