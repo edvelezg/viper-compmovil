@@ -8,9 +8,13 @@ import javax.servlet.http.HttpServlet;
 
 public class ServletEjemplo extends HttpServlet {
 
+    private String imgDir;
+    private File dir;
+    
     public void init() throws ServletException {
         super.init();
-
+        imgDir = this.getServletContext().getRealPath("/") + "\\images";
+        dir = new File(imgDir);
     }
 
     protected void service(HttpServletRequest request, HttpServletResponse response)
@@ -33,23 +37,13 @@ public class ServletEjemplo extends HttpServlet {
 
         try {
 
-            // Get Name
+            // Info gral
             String nombre = din.readUTF();
-            System.out.println("Nombre " + nombre);
-
-            // Get Phone
             String telefono = din.readUTF();
-            System.out.println("Telefono " + telefono);
-
             String direccion = din.readUTF();
-            System.out.println("Telefono " + direccion);
             String intra = din.readUTF();
-            System.out.println("Telefono " + intra);
             String intranet = din.readUTF();
-            System.out.println("Telefono " + intranet);
             String acceso = din.readUTF();
-            System.out.println("Telefono " + acceso);
-
 
             // Get Image
             int length = din.readInt();
@@ -57,29 +51,23 @@ public class ServletEjemplo extends HttpServlet {
             for (int j = 0; j < length; j++) {
                 rawImg[j] = din.readByte();
             }
-            String imgDir = this.getServletContext().getRealPath("/") + "\\images";
-            File dir = new File(imgDir);
-            String filePathName = null;
-            String fileName = null;
-            try {
-                fileName = "pic" + dir.list().length + ".png";
-                filePathName =  imgDir + "\\" + fileName;
-                FileOutputStream file = new FileOutputStream(filePathName);
-//                for (int i = 0; i < rawImg.length; i++) {
-                    file.write(rawImg);
-//                }
-                file.flush();
-                file.close();
-            } catch (IOException e) {
-                System.out.println("Error--" + e.toString());
-            }
+            String imgName = saveImg(rawImg);
 
+            // Get Map
+            int mapLength = din.readInt();
+            byte[] rawMap = new byte[mapLength];
+            for (int j = 0; j < mapLength; j++) {
+                rawMap[j] = din.readByte();
+            }           
+            String mapName = saveMap(rawMap);
+
+            // Add to Database
             if (nombre != null && telefono != null) {
                 ToDoList toDoList = (ToDoList) getServletContext().getAttribute("toDoList");
-                toDoList.addItem(nombre, telefono, direccion, intra, intranet, acceso, fileName);
+                toDoList.addItem(nombre, telefono, direccion, intra, intranet, acceso, imgName, mapName);
             }
 
-
+            
             bout = new ByteArrayOutputStream();
             dos = new DataOutputStream(bout);
             dos.writeUTF("ok");
@@ -99,11 +87,39 @@ public class ServletEjemplo extends HttpServlet {
         out.print(salida);
     }
 
-    //    public boolean guardarPersona(Persona persona) {
-//        System.out.println("Guardando Persona...");
-//        System.out.println("Nombre:   " + persona.getNombre());
-//        System.out.println("Apellido:     " + persona.getApellido());
-//
-//        return true;
-//    }
+    public String saveMap(byte[] rawImg) {
+        String filePathName = null;
+        String fileName = null;
+        try {
+            fileName = "map" + dir.list().length + ".gif";
+            filePathName = imgDir + "\\" + fileName;
+            FileOutputStream file = new FileOutputStream(filePathName);
+//                for (int i = 0; i < rawImg.length; i++) {
+            file.write(rawImg);
+//                }
+            file.flush();
+            file.close();
+        } catch (IOException e) {
+            System.out.println("Error--" + e.toString());
+        }
+        return fileName;
+    }
+
+    public String saveImg(byte[] rawImg) {
+        String filePathName = null;
+        String fileName = null;
+        try {
+            fileName = "pic" + dir.list().length + ".png";
+            filePathName = imgDir + "\\" + fileName;
+            FileOutputStream file = new FileOutputStream(filePathName);
+//                for (int i = 0; i < rawImg.length; i++) {
+            file.write(rawImg);
+//                }
+            file.flush();
+            file.close();
+        } catch (IOException e) {
+            System.out.println("Error--" + e.toString());
+        }
+        return fileName;
+    }
 }

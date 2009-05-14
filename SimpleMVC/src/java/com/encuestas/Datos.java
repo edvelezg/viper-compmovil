@@ -12,18 +12,20 @@ public class Datos {
     private String intranet;
     private String acceso;
     private String imagen;
-    private Vector aficiones;
+    private String mapa;
+
     private int pos = 0;
 
-    public Datos(String nombre, int tel, String dir, int id) {
+    public Datos(String nombre, int telefono, String direccion, String intra, String intranet, String acceso, String imagen, String mapa, int id) {
         this.nombre = nombre;
-        this.tel = tel;
-        this.dir = dir;
+        this.tel = telefono;
+        this.dir = direccion;
+        this.intra = intra;
+        this.intranet = intranet;
+        this.acceso = acceso;
+        this.imagen = imagen;
+        this.mapa = mapa;
         this.id = id;
-        this.intra = "n/a";
-        this.intranet = "n/a";
-        this.acceso = "n/a";
-        this.imagen="n/a";
     }
 
     public String getNombre() {
@@ -52,12 +54,14 @@ public class Datos {
     public String getImagen(){
         return imagen;
     }
-     public void setImagen(String imagen){
+
+    public String getMapa(){
+        return mapa;
+    }
+    
+    public void setImagen(String imagen){
         this.imagen=imagen;
     }
-//    public Vector getAficiones() {
-//        return aficiones;
-//    }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
@@ -86,14 +90,11 @@ public class Datos {
         this.pos = pos;
     }
 
-    public void setAficiones(Vector aficiones) {
-        this.aficiones = aficiones;
-    }
     public int getId() {
             return id;
     }
 
     public String toString() {
-            return getNombre() + " -- " + getTel();
+            return getNombre() + " -- " + getMapa();
     }
 }
