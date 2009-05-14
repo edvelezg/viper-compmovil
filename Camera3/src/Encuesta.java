@@ -15,7 +15,9 @@ import javax.microedition.lcdui.Image;
 public class Encuesta {
 
     private static RecordStore imagesRS = null;
-    static byte []lectura;
+    static byte[] pngImage;
+    static byte[] pngMap;
+
     static void almacenaEncuesta(Datos d) {
         Image image = d.getImagen();
 
@@ -31,8 +33,15 @@ public class Encuesta {
         width = image.getWidth();
 
         int[] imgRgbData = new int[width * height];
+        Image map = d.getMapa();
+        int h, w;
+        h = map.getHeight();
+        w = map.getWidth();
+        int[] imgMap = new int[w * h];
+
 
         try {
+            map.getRGB(imgMap, 0, w, 0, 0, w, h);
             image.getRGB(imgRgbData, 0, width, 0, 0, width, height);
             imagesRS = RecordStore.openRecordStore("datos", true);
 
@@ -57,14 +66,26 @@ public class Encuesta {
 //                System.out.println(imgRgbData[i]);
             }
             dout.writeInt(d.getPngImage().length);
-            lectura=d.getPngImage();
-            System.out.println("almacenar:prim:ult:" + lectura[0] + " " + lectura[lectura.length-1]);
-            for(int j=0;j<d.getPngImage().length;j++){
-//               System.out.println(lectura[j]);
-               dout.writeByte(lectura[j]);
+            pngImage = d.getPngImage();
+            System.out.println("almacenar:prim:ult:" + pngImage[0] + " " + pngImage[pngImage.length - 1]);
+            for (int j = 0; j < d.getPngImage().length; j++) {
+                dout.writeByte(pngImage[j]);
             }
-           
-
+            dout.writeInt(h);
+            dout.writeInt(w);
+            dout.writeLong(System.currentTimeMillis());
+            dout.writeInt(imgMap.length);
+            for (int i = 0; i < imgMap.length; i++) {
+                dout.writeInt(imgMap[i]);
+                System.out.println(imgMap[i]);
+            }
+            dout.writeInt(d.getPngMap().length);
+            pngMap = d.getPngMap();
+            System.out.println("almacenar:prim:ult:" + pngImage[0] + " " + pngImage[pngImage.length - 1]);
+            for (int j = 0; j < d.getPngMap().length; j++) {
+                System.out.println(pngMap[j]);
+                dout.writeByte(pngMap[j]);
+            }
             dout.flush();
             dout.close();
             byte[] data = bout.toByteArray();
@@ -125,16 +146,21 @@ public class Encuesta {
 
     static void modifEncuesta(Datos d, int pos) {
         Image image = d.getImagen();
-//        String resourceName = "imagen.png";
         int height, width;
-//        if (resourceName == null) {
-//            return; // resource name is required
-//        }
+
         // Calculate needed size and allocate buffer area
         height = image.getHeight();
         width = image.getWidth();
         int[] imgRgbData = new int[width * height];
+
+        Image map = d.getMapa();
+        int h, w;
+        h = map.getHeight();
+        w = map.getWidth();
+        int[] imgMap = new int[w * h];
+
         try {
+            map.getRGB(imgMap, 0, w, 0, 0, w, h);
             image.getRGB(imgRgbData, 0, width, 0, 0, width, height);
             imagesRS = RecordStore.openRecordStore("datos", true);
 
@@ -154,6 +180,27 @@ public class Encuesta {
             for (int i = 0; i < imgRgbData.length; i++) {
                 dos.writeInt(imgRgbData[i]);
             }
+            dos.writeInt(d.getPngImage().length);
+            pngImage = d.getPngImage();
+            System.out.println("almacenar:prim:ult:" + pngImage[0] + " " + pngImage[pngImage.length - 1]);
+            for (int j = 0; j < d.getPngImage().length; j++) {
+//               System.out.println(lectura[j]);
+                dos.writeByte(pngImage[j]);
+            }
+            dos.writeInt(h);
+            dos.writeInt(w);
+            dos.writeLong(System.currentTimeMillis());
+            dos.writeInt(imgMap.length);
+            for (int i = 0; i < imgMap.length; i++) {
+                dos.writeInt(imgMap[i]);
+            }
+            dos.writeInt(d.getPngMap().length);
+            pngMap = d.getPngMap();
+            System.out.println("almacenar:prim:ult:" + pngImage[0] + " " + pngImage[pngImage.length - 1]);
+            for (int j = 0; j < d.getPngMap().length; j++) {
+//               System.out.println(lectura[j]);
+                dos.writeByte(pngMap[j]);
+            }
             dos.flush();
             dos.close();
             byte[] data = bas.toByteArray();
@@ -171,13 +218,13 @@ public class Encuesta {
 
 //        RecordStore imagesRS = null;
         Image img = null;
+        Image mapa = null;
         Vector persons = new Vector();
         try {
             Datos datos;
             imagesRS = RecordStore.openRecordStore("datos", true);
             RecordEnumeration re = imagesRS.enumerateRecords(null, null, true);
-            int numRecs = re.numRecords();
-            System.out.println(numRecs);
+
             // For each record
             while (re.hasNextElement()) {
                 byte[] b = re.nextRecord();
@@ -197,102 +244,66 @@ public class Encuesta {
                 int length = dis.readInt();
 
                 int[] rawImg = new int[width * height];
-                //  Serialize the image raw data
+
+                //Serialize the image raw data
                 for (int i = 0; i < length; i++) {
                     rawImg[i] = dis.readInt();
                 }
                 img = Image.createRGBImage(rawImg, width, height, false);
-                System.out.println(nombre);
-                System.out.println(tel);
-                System.out.println(img);
-                int longitud=dis.readInt();
-
-                byte[] pngImage = new byte[longitud];
-                 for (int i = 0; i < longitud; i++) {
+                int longitud = dis.readInt();
+                pngImage = new byte[longitud];
+                for (int i = 0; i < longitud; i++) {
                     pngImage[i] = dis.readByte();
                 }
 
+
+                int w = dis.readInt();
+                int h = dis.readInt();
+                long timestamp1 = dis.readLong();
+                int len = dis.readInt();
+
+                int[] rawImg1 = new int[w * h];
+
+                //Serialize the image raw data
+                for (int i = 0; i < len; i++) {
+                    rawImg1[i] = dis.readInt();
+                }
+                mapa = Image.createRGBImage(rawImg1, w, h, false);
+                longitud = dis.readInt();
+                pngMap = new byte[longitud];
+                for (int i = 0; i < longitud; i++) {
+                    pngMap[i] = dis.readByte();
+                }
+//                int w = dis.readInt();
+//                int h = dis.readInt();
+//                long stamp = dis.readLong();
+//                int len = dis.readInt();
+//                int[] rawImg1 = new int[w * h];
+//                for (int i = 0; i < len; i++) {
+//                    rawImg1[i] = dis.readInt();
+//                    System.out.println(rawImg1[i]);
+//                }
+//                mapa = Image.createRGBImage(rawImg1, width, height, false);
+///*-->*/         byte[] pngMap = new byte[longMap];
+///*-->*/         for (int i = 0; i < longMap; i++) {
+///*-->*/             pngMap[i] = dis.readByte();
+///*-->*/         }
 //                bais.reset();
 //                dis.reset();
 
-                datos = new Datos(nombre, tel, dir, in, intra, acceso, img,pngImage);
+                datos = new Datos(nombre, tel, dir, in, intra, acceso, img, pngImage, mapa, pngMap);
                 persons.addElement(datos);
                 bais.close();
                 dis.close();
 //                imagesRS.closeRecordStore();
             }
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("salida error" + e);
         }
 
         return persons;
     }
 
-//    static Vector leerEncuesta() {
-//
-//        Image img = null;
-//        Vector persons = new Vector();
-//        try {
-//            Datos datos;
-//            imagesRS = RecordStore.openRecordStore("datos", true);
-//            RecordEnumeration re = imagesRS.enumerateRecords(null, null, true);
-//            int numRecs = re.numRecords();
-//
-//            // For each record
-//            for (int i = 0; i < numRecs; i++) {
-//                // Get the next record's ID
-//                int recId = re.nextRecordId(); // throws InvalidRecordIDException
-//                System.out.println(recId);
-//                // Get the record
-//                byte[] rec = imagesRS.getRecord(recId);
-//                //
-//                ByteArrayInputStream bin = new ByteArrayInputStream(rec);
-//                DataInputStream din = new DataInputStream(bin);
-////                String name = din.readUTF();
-//                // If this is the image we are looking for, load it.
-////                if (name.equals(resourceName)== false) continue;
-//                String nombre = din.readUTF();
-//                String tel = din.readUTF();
-//                String dir = din.readUTF();
-//                String in = din.readUTF();
-//                System.out.println(nombre);
-//                System.out.println(tel);
-////            System.out.println(img);
-//                String intra = din.readUTF();
-//                String acceso = din.readUTF();
-//                int width = din.readInt();
-//                int height = din.readInt();
-//                long timestamp = din.readLong();
-//                int length = din.readInt();
-//
-//                int[] rawImg = new int[width * height];
-//                //  Serialize the image raw data
-//                for (i = 0; i < length; i++) {
-//                    rawImg[i] = din.readInt();
-//                }
-//                img = Image.createRGBImage(rawImg, width, height, false);
-//                datos = new Datos(nombre, tel, dir, in, intra, acceso, img);
-//                persons.addElement(datos);
-//                din.close();
-//                bin.close();
-//            }
-//        } catch (InvalidRecordIDException ignore) {
-//            // End of enumeration, ignore
-//        } catch (Exception e) {
-//            // Log the exception
-//        } finally {
-//            try {
-//                // Close the Record Store
-//                if (imagesRS != null) {
-//                    imagesRS.closeRecordStore();
-//                }
-//            } catch (Exception ignore) {
-//                // Ignore
-//            }
-//        }
-//
-//        return persons;
-//    }
     public static void delete(String persona) throws Exception {
         try {
 

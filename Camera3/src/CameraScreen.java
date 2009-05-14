@@ -289,9 +289,9 @@ class CameraScreen
 //                        for (int i = 0; i < pngImage.length; i++) {
 //                            System.out.println(pngImage[i]);
 //                        }
-                        midlet.show(image, pngImage);
-
-                        discardPlayer();
+                      
+                       midlet.show(image, pngImage);
+                        //discardPlayer();
                     } catch (MediaException me) {
 //                        midlet.showError("MediaException: " + me.getMessage());
                     } catch (SecurityException se) {
