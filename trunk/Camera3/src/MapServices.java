@@ -35,7 +35,7 @@ public class MapServices extends Thread {
             padre.form.insert(1, map);
             Display.getDisplay(padre).setCurrent(padre.form);
             java.io.InputStream isTemp = http.requestMap(latitud, longitud);
-            final int MAX_LENGTH = isTemp.available();
+            final int MAX_LENGTH = 12000;
             byte[] bufMap = new byte[MAX_LENGTH];
             int total = 0;
             while (total < MAX_LENGTH) {
