@@ -7,15 +7,8 @@
  *
  * @author Victor
  */
-import java.io.IOException;
-import java.io.InputStream;
-import javax.microedition.io.Connector;
-import javax.microedition.io.HttpConnection;
-import javax.microedition.location.*;
-import javax.microedition.lcdui.*;
 import java.io.*;
 import javax.microedition.io.*;
-import javax.microedition.midlet.*;
 import javax.microedition.lcdui.*;
 
 /**
@@ -44,12 +37,9 @@ public class Lookup extends Thread {
     public void run() {
 
         String word = padre.buscanombre.getString();
-        String definition;
+        String definition = "fail";
         try {
-
             definition = lookUp(word);
-
-
         } catch (IOException ioe) {
 //          if(!word.equals(nombre)){
 //            Alert report = new Alert(
@@ -62,48 +52,52 @@ public class Lookup extends Thread {
 //            return;
 //          }
         }
-        Alert al = new Alert("Leyendo....");
-        al.setTimeout(Alert.FOREVER);
-        Display.getDisplay(padre).setCurrent(al);
-        // if(word.equals(nombre)){
-        padre.form1.deleteAll();
-        padre.form1.insert(0, imageItem);
-        padre.form1.insert(1, imageItem1);
-        padre.nombre1.setString(nombre);
-        padre.tel1.setString(String.valueOf(tel));
-        padre.dir1.setString(dir);
-        if (intr.equals(padre.intra1.getString(0))) {
-            padre.intra1.setSelectedIndex(0, true);
+        if (definition.equals("fail")) {
+            Alert al = new Alert("Ese usuario no existe.");
+            al.setTimeout(Alert.FOREVER);
+            Display.getDisplay(padre).setCurrent(al);
         } else {
-            padre.intra1.setSelectedIndex(1, true);
+            Alert al = new Alert("Leyendo....");
+            al.setTimeout(Alert.FOREVER);
+            Display.getDisplay(padre).setCurrent(al);
+            // if(word.equals(nombre)){
+            padre.form1.deleteAll();
+            padre.form1.insert(0, imageItem);
+            padre.form1.insert(1, imageItem1);
+            padre.nombre1.setString(nombre);
+            padre.tel1.setString(String.valueOf(tel));
+            padre.dir1.setString(dir);
+            if (intr.equals(padre.intra1.getString(0))) {
+                padre.intra1.setSelectedIndex(0, true);
+            } else {
+                padre.intra1.setSelectedIndex(1, true);
+            }
+            if (intra.equals(padre.intranet1.getString(0))) {
+                padre.intranet1.setSelectedIndex(0, true);
+            } else if (intra.equals(padre.intranet1.getString(1))) {
+                padre.intranet1.setSelectedIndex(1, true);
+            } else if (intra.equals(padre.intranet1.getString(2))) {
+                padre.intranet1.setSelectedIndex(2, true);
+            } else {
+                padre.intranet1.setSelectedIndex(3, true);
+            }
+            if (acces.equals(padre.acceso1.getString(0))) {
+                padre.acceso1.setSelectedIndex(0, true);
+            } else if (acces.equals(padre.acceso1.getString(1))) {
+                padre.acceso1.setSelectedIndex(1, true);
+            } else if (acces.equals(padre.acceso1.getString(2))) {
+                padre.acceso1.setSelectedIndex(2, true);
+            } else {
+                padre.acceso1.setSelectedIndex(3, true);
+            }
+            padre.form1.append(padre.nombre1);
+            padre.form1.append(padre.tel1);
+            padre.form1.append(padre.dir1);
+            padre.form1.append(padre.intra1);
+            padre.form1.append(padre.intranet1);
+            padre.form1.append(padre.acceso1);
+            Display.getDisplay(padre).setCurrent(padre.form1);
         }
-        if (intra.equals(padre.intranet1.getString(0))) {
-            padre.intranet1.setSelectedIndex(0, true);
-        } else if (intra.equals(padre.intranet1.getString(1))) {
-            padre.intranet1.setSelectedIndex(1, true);
-        } else if (intra.equals(padre.intranet1.getString(2))) {
-            padre.intranet1.setSelectedIndex(2, true);
-        } else {
-            padre.intranet1.setSelectedIndex(3, true);
-        }
-        if (acces.equals(padre.acceso1.getString(0))) {
-            padre.acceso1.setSelectedIndex(0, true);
-        } else if (acces.equals(padre.acceso1.getString(1))) {
-            padre.acceso1.setSelectedIndex(1, true);
-        } else if (acces.equals(padre.acceso1.getString(2))) {
-            padre.acceso1.setSelectedIndex(2, true);
-        } else {
-            padre.acceso1.setSelectedIndex(3, true);
-        }
-        padre.form1.append(padre.nombre1);
-        padre.form1.append(padre.tel1);
-        padre.form1.append(padre.dir1);
-        padre.form1.append(padre.intra1);
-        padre.form1.append(padre.intranet1);
-        padre.form1.append(padre.acceso1);
-        Display.getDisplay(padre).setCurrent(padre.form1);
-//        }else{
-//
 
     }
 
@@ -118,12 +112,11 @@ public class Lookup extends Thread {
             hc = (HttpConnection) Connector.open(url);
             hc.setRequestProperty("Connection", "close");
             in = hc.openInputStream();
+            System.out.println("in.available() " + in.available());
 
-//            int contentLength = (int) hc.getLength();
-//            if (contentLength == -1) {
-//                contentLength = 255;
-//            }
-
+            if (in.available() == 0) {
+                return "fail";
+            }
             //Abrir Streams de entrada para la captura de la respuesta
             final int MAX_LENGTH = 1280;
             byte[] buf = new byte[MAX_LENGTH];
@@ -136,6 +129,7 @@ public class Lookup extends Thread {
                 total += count;
             }
             in.close();
+            
             ByteArrayInputStream bin = new ByteArrayInputStream(buf);
             DataInputStream dis = new DataInputStream(bin);
             nombre = dis.readUTF();
@@ -279,7 +273,7 @@ public class Lookup extends Thread {
                 }
             }
         }
-        return definition;
+        return "pass";
     }
 
     private Image createThumbnail(Image image) {
