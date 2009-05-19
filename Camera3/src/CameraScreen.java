@@ -68,140 +68,6 @@ class CameraScreen
         }
     }
 
-    static void storeImage(Image image) {
-        RecordStore imagesRS = null;
-        String resourceName = "imagen.png";
-
-
-        int height, width;
-        if (resourceName == null) {
-            return; // resource name is required
-        }
-        // Calculate needed size and allocate buffer area
-        height = image.getHeight();
-        width = image.getWidth();
-
-        int[] imgRgbData = new int[width * height];
-
-        try {
-            image.getRGB(imgRgbData, 0, width, 0, 0, width, height);
-            imagesRS = RecordStore.openRecordStore("StoreImage", true);
-
-            //
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            DataOutputStream dout = new DataOutputStream(bout);
-            //  Serialize the image name
-//            dout.writeUTF(resourceName);
-            dout.writeInt(width);
-            dout.writeInt(height);
-            dout.writeLong(System.currentTimeMillis());
-            dout.writeInt(imgRgbData.length);
-            //  Serialize the image raw data
-            for (int i = 0; i < imgRgbData.length; i++) {
-                dout.writeInt(imgRgbData[i]);
-                System.out.println(imgRgbData[i]);
-            }
-            dout.flush();
-            dout.close();
-            byte[] data = bout.toByteArray();
-            int recid = imagesRS.addRecord(data, 0, data.length);
-            log("Image stored to RMS");
-        } catch (Exception e) {
-            log("Err in Add Image to RMS" + e);
-        } finally {
-            try {
-                // Close the Record Store
-                if (imagesRS != null) {
-                    imagesRS.closeRecordStore();
-                }
-            } catch (Exception ignore) {
-                // Ignore
-            }
-        }
-    }
-
-    public RecordStore openRecordStore() {
-        try {
-            record = RecordStore.openRecordStore("StoreImage", true);
-        } catch (Exception e) {
-            log("Err in open RS");
-        }
-        return record;
-    }
-
-    public void getImage() {
-        try {
-            openRecordStore();
-            InputStream is = new ByteArrayInputStream(record.getRecord(1));
-            Image im = Image.createImage(is);
-            System.out.println("Imagen" + im);
-        // form.append(im);
-//            midlet.show(im);
-//            midlet.show(form);
-        } catch (Exception e) {
-            System.out.println("No ha traido imagen" + e);
-        }
-    }
-
-    static public Image loadPngFromRMS() {
-        RecordStore imagesRS = null;
-        Image img = null;
-        try {
-            imagesRS = RecordStore.openRecordStore("StoreImage", true);
-            RecordEnumeration re = imagesRS.enumerateRecords(null, null, true);
-            int numRecs = re.numRecords();
-
-            // For each record
-            for (int i = 0; i < numRecs; i++) {
-                // Get the next record's ID
-                int recId = re.nextRecordId(); // throws InvalidRecordIDException
-                System.out.println(recId);
-                // Get the record
-                byte[] rec = imagesRS.getRecord(recId);
-                //
-                ByteArrayInputStream bin = new ByteArrayInputStream(rec);
-                DataInputStream din = new DataInputStream(bin);
-//                String name = din.readUTF();
-                // If this is the image we are looking for, load it.
-//                if (name.equals(resourceName)== false) continue;
-
-                int width = din.readInt();
-                int height = din.readInt();
-                long timestamp = din.readLong();
-                int length = din.readInt();
-
-                int[] rawImg = new int[width * height];
-                //  Serialize the image raw data
-                for (i = 0; i < length; i++) {
-                    rawImg[i] = din.readInt();
-                }
-                img = Image.createRGBImage(rawImg, width, height, false);
-                din.close();
-                bin.close();
-            }
-        } catch (InvalidRecordIDException ignore) {
-            // End of enumeration, ignore
-        } catch (Exception e) {
-            // Log the exception
-        } finally {
-            try {
-                // Close the Record Store
-                if (imagesRS != null) {
-                    imagesRS.closeRecordStore();
-                }
-            } catch (Exception ignore) {
-                // Ignore
-            }
-        }
-//        openRecordStore();
-//        try{
-//            InputStream is = new ByteArrayInputStream(record.getRecord(1));
-//            img = Image.createImage(is);
-//        }catch(Exception e){
-//
-//        }
-        return img;
-    }
 
 //Create a method for detecting key presses.
     public void keyPressed(int keyCode) {
@@ -285,13 +151,20 @@ class CameraScreen
                         Image image = Image.createImage(pngImage, 0, pngImage.length);
 
                         System.out.println(image);
-                        System.out.println("run:primero:ultimo: " + pngImage[0] + " " + pngImage[pngImage.length-1]);
+                        System.out.println("run:primero:ultimo: " + pngImage[0] + " " + pngImage[pngImage.length - 1]);
 //                        for (int i = 0; i < pngImage.length; i++) {
 //                            System.out.println(pngImage[i]);
 //                        }
-                      
-                       midlet.show(image, pngImage);
-                        //discardPlayer();
+                        midlet.img=image;
+                        midlet.pngImage=pngImage;
+                        midlet.form.delete(0);
+                        image=createThumbnail(image);
+                         ImageItem imageitem = new ImageItem("", image, ImageItem.LAYOUT_TOP | ImageItem.LAYOUT_RIGHT, null);
+                        midlet.form.insert(0, imageitem);
+
+                        Display.getDisplay(midlet).setCurrent(midlet.form);
+//                        midlet.show(image, pngImage);
+//                    discardPlayer();
                     } catch (MediaException me) {
 //                        midlet.showError("MediaException: " + me.getMessage());
                     } catch (SecurityException se) {
@@ -301,10 +174,34 @@ class CameraScreen
             }.start();
         }
     }
+     private Image createThumbnail(Image image) {
+        int sourceWidth = image.getWidth();
+        int sourceHeight = image.getHeight();
 
-    public static void log(String msg) {
-        System.out.println("Msg: " + msg);
+        int thumbWidth = 30;//64
+        int thumbHeight = -1;//
+
+        if (thumbHeight == -1) {
+            thumbHeight = thumbWidth * sourceHeight / sourceWidth;
+        }
+
+        Image thumb = Image.createImage(thumbWidth, thumbHeight);
+        Graphics g = thumb.getGraphics();
+
+        for (int y = 0; y < thumbHeight; y++) {
+            for (int x = 0; x < thumbWidth; x++) {
+                g.setClip(x, y, 1, 1);
+                int dx = x * sourceWidth / thumbWidth;
+                int dy = y * sourceHeight / thumbHeight;
+                g.drawImage(image, x - dx, y - dy, Graphics.LEFT | Graphics.TOP);
+            }
+        }
+
+        Image immutableThumb = Image.createImage(thumb);
+
+        return immutableThumb;
     }
+
 }
 
 

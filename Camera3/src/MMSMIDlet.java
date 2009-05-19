@@ -19,6 +19,7 @@ public class MMSMIDlet
 
     private final String APPLICATION_ID = "mmsdemo";
     private CameraScreen cameraScreen = null;
+    private Camera cameraScreen1 = null;
 //  private ReceiveScreen receiveScreen;
 //  private SendScreen sendScreen;
 //  private InfoScreen infoScreen;
@@ -29,22 +30,29 @@ public class MMSMIDlet
     public Form form;
     public Form form1;
     /*-->*/
-    public Command getImage,  storeImage,  exit,  atras,  camera,  guardar,  crear,  editar,  eliminar,  buscar,  transferir,  getMap,  cmdSI,  cmdNO;
-    public Command Salir,  Buscar;
+    public Command editarencuesta,  exit,  atras,  camera,  guardar,  crear,  editar,  eliminar,  buscar,  transferir,  getMap,  cmdSI,  cmdNO,  Guardar,  Camara,  Mapa;
+    public Command Salir,  Salir1,  Buscar,  Buscar1;
     Image img;
     Image mapa;
     /*-->*/
     byte[] pngMap;
     int cont = 0;
-    public TextField nombre,  tel,  dir,  buscanombre,  nombre1,  tel1,  dir1;
-    public ChoiceGroup intra,  intranet,  acceso,  intra1,  intranet1,  acceso1;
-    private List lista;
+    public TextField nombre,  tel,  dir,  buscanombre,  buscanombre1,  nombre1,  tel1,  dir1,  nombre2,  tel2,  dir2;
+    public ChoiceGroup intra,  intranet,  acceso,  intra1,  intranet1,  acceso1,  intra2,  intranet2,  acceso2;
+    public List lista;
     private Vector dato;
+    String nombre11, dir11, intr11, intra11, acces11, tel11;
+    //int tel11=0;
+    byte data11[];
+    byte[] data113;
+
     /*-->*/
     private Datos datos = new Datos("", "", "", "", "", "", null, null, null, null);
-    private Datos d;
+    private Datos d,  d1;
     private ComunicacionHttp http;
+    private ComunicacionHttp1 http1;
     private Thread hiloEnvio;
+    private Thread hiloEnvio1;
     private boolean seleccion = false;
     byte[] pngImage;
     private int posicion = 0;
@@ -55,42 +63,53 @@ public class MMSMIDlet
     TextBox txtIChannel;
 //    private Image person;
     public Form form2;
+    public Form form3;
+    public Form form4;
+    byte data1[];
+    byte data[];
+    public String nombreAnterior = "";
+    public int bandera = 0;
 
     public MMSMIDlet() throws IOException {
         http = new ComunicacionHttp(this);
-        /*-->*/ d = new Datos("", "", "", "", "", "", null, null, null, null);
-        hiloEnvio = new Thread(this);
 
+        http1 = new ComunicacionHttp1(this);
+        d = new Datos("", "", "", "", "", "", null, null, null, null);
+        d1 = new Datos("", "", "", "", "", "", null, null, null, null);
+        hiloEnvio = new Thread(this);
+        hiloEnvio1 = new Thread(this);
         form = new Form("Encuesta a Clientes");
         form1 = new Form("Resultado de la Encuesta");
         form2 = new Form("Busqueda de Encuesta");
-
+        form4 = new Form("Edicion de Encuesta");
+        form3 = new Form("Resultado de la Encuesta");
         txtIChannel = new TextBox("¡", null, 256, TextField.ANY);
         lista = new List("Encuestas", List.IMPLICIT);
         nombre = new TextField("Nombre:", "", 10, TextField.ANY);
         buscanombre = new TextField("Nombre a Buscar:", "", 10, TextField.ANY);
+        buscanombre1 = new TextField("Nombre a Editar:", "", 10, TextField.ANY);
+
         exit = new Command("Salir", Command.EXIT, 1);
         atras = new Command("Atras", Command.EXIT, 1);
-//        storeImage = new Command("StoreImage", Command.SCREEN, 1);
+
 //        getImage = new Command("GetImage", Command.SCREEN, 1);
-        camera = new Command("Agregar Foto", Command.SCREEN, 1);
+        camera = new Command("" +
+                " Foto", Command.SCREEN, 1);
         /*-->*/ getMap = new Command("Agregar Mapa", Command.SCREEN, 1);
         guardar = new Command("Guardar", Command.OK, 1);
         crear = new Command("Crear", Command.OK, 1);
         editar = new Command("Editar", Command.OK, 1);
         transferir = new Command("Transferir", Command.OK, 1);
         eliminar = new Command("Eliminar", Command.OK, 1);
+        editarencuesta = new Command("Editar Encuesta", Command.OK, 1);
         buscar = new Command("Buscar Encuesta", Command.OK, 1);
         Buscar = new Command("Buscar", Command.OK, 4);
+        Buscar1 = new Command("Buscar", Command.OK, 4);
         Salir = new Command("Atras", Command.EXIT, 1);
-//        img = Image.createImage("/persona.png");
-//        img = createThumbnail(img);
-//        ImageItem imgItem = new ImageItem("", img,
-//                ImageItem.LAYOUT_TOP |
-//                ImageItem.LAYOUT_RIGHT, null);
-////            form.insert(0, imgItem);
-////            form.delete(1);
-//        form.append(imgItem);
+        Camara = new Command("Foto", Command.OK, 1);
+        Mapa = new Command("Agregar Mapa", Command.OK, 1);
+        Guardar = new Command("Guardar", Command.OK, 1);
+
         cmdNO = new Command("No", Command.EXIT, 4);
         cmdSI = new Command("Si", Command.OK, 5);
         txtIChannel.addCommand(cmdNO);
@@ -102,6 +121,7 @@ public class MMSMIDlet
         lista.addCommand(crear);
         lista.addCommand(editar);
         lista.addCommand(transferir);
+        lista.addCommand(editarencuesta);
         lista.addCommand(buscar);
         lista.addCommand(eliminar);
         lista.setCommandListener(this);
@@ -116,43 +136,40 @@ public class MMSMIDlet
         form2.addCommand(Salir);
         form2.addCommand(Buscar);
         form2.setCommandListener(this);
-//        form1.addCommand(Salir);
-//        form1.setCommandListener(this);
-
-
+        form4.append(buscanombre1);
+        form4.addCommand(Salir);
+        form4.addCommand(Buscar1);
+        form4.setCommandListener(this);
 
     }
 
     public void run() {
-        try {
-            http.enviarPorHttp(d);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (bandera == 0) {
+            try {
+                http.enviarPorHttp(d);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                http1.enviarPorHttp(d1);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void inicializar() throws IOException {
         form.deleteAll();
+        CargarImagenes mp = new CargarImagenes(this);
+        mp.start();
         nombre = new TextField("Nombre:", "", 20, TextField.ANY);
         nombre1 = new TextField("Nombre:", "", 20, TextField.ANY);
+        nombre2 = new TextField("Nombre:", "", 20, TextField.UNEDITABLE);
         tel = new TextField("Telefono:", "", 20, TextField.ANY);
         dir = new TextField("Direccion:", "", 20, TextField.ANY);
         intra = new ChoiceGroup("Hace uso de la Intranet:", ChoiceGroup.EXCLUSIVE);
-        CargarImagenes mp = new CargarImagenes(this);
-        mp.start();
-//        img = Image.createImage("/persona.png");
-//        img = createThumbnail(img);
-//        ImageItem imgItem = new ImageItem("", img,
-//                ImageItem.LAYOUT_TOP |
-//                ImageItem.LAYOUT_RIGHT, null);
-////            form.insert(0, imgItem);
-////            form.delete(1);
-//        form.insert(0, imgItem);
-//
-//        /*-->*/ mapa = Image.createImage("/mapa2.png");
-//        /*-->*/ mapa = createThumbnail(mapa);
-//        /*-->*/ ImageItem map = new ImageItem("", mapa, ImageItem.LAYOUT_TOP | ImageItem.LAYOUT_RIGHT, null);
-//        /*-->*/ form.append(map);
+
         intra.append("Si", null);
         intra.append("No", null);
         intranet = new ChoiceGroup("La Intranet le ha servido como una herramienta de trabajo:", ChoiceGroup.EXCLUSIVE);
@@ -169,19 +186,10 @@ public class MMSMIDlet
         tel1 = new TextField("Telefono:", "", 20, TextField.ANY);
         dir1 = new TextField("Direccion:", "", 20, TextField.ANY);
         intra1 = new ChoiceGroup("Hace uso de la Intranet:", ChoiceGroup.EXCLUSIVE);
-//        img = Image.createImage("/persona.png");
-//        img = createThumbnail(img);
-//        imgItem = new ImageItem("", img,
-//                ImageItem.LAYOUT_TOP |
-//                ImageItem.LAYOUT_RIGHT, null);
-////            form.insert(0, imgItem);
-////            form.delete(1);
-//        form1.insert(0, imgItem);
-//
-//        /*-->*/ mapa = Image.createImage("/mapa2.png");
-//        /*-->*/ mapa = createThumbnail(mapa);
-//        map = new ImageItem("", mapa, ImageItem.LAYOUT_TOP | ImageItem.LAYOUT_RIGHT, null);
-//        /*-->*/ form1.append(map);
+        tel2 = new TextField("Telefono:", "", 20, TextField.ANY);
+        dir2 = new TextField("Direccion:", "", 20, TextField.ANY);
+        intra2 = new ChoiceGroup("Hace uso de la Intranet:", ChoiceGroup.EXCLUSIVE);
+
         intra1.append("Si", null);
         intra1.append("No", null);
         intranet1 = new ChoiceGroup("La Intranet le ha servido como una herramienta de trabajo:", ChoiceGroup.EXCLUSIVE);
@@ -194,6 +202,21 @@ public class MMSMIDlet
         acceso1.append("Algunas Veces", null);
         acceso1.append("Casi siempre", null);
         acceso1.append("Siempre", null);
+
+        intra2.append("Si", null);
+        intra2.append("No", null);
+        intranet2 = new ChoiceGroup("La Intranet le ha servido como una herramienta de trabajo:", ChoiceGroup.EXCLUSIVE);
+        intranet2.append("Nunca", null);
+        intranet2.append("Algunas Veces", null);
+        intranet2.append("Casi siempre", null);
+        intranet2.append("Siempre", null);
+        acceso2 = new ChoiceGroup("El acceso a la Intranet se realiza de manera rápida y sencilla:", ChoiceGroup.EXCLUSIVE);
+        acceso2.append("Nunca", null);
+        acceso2.append("Algunas Veces", null);
+        acceso2.append("Casi siempre", null);
+        acceso2.append("Siempre", null);
+
+
         form.append(nombre);
         form.append(tel);
         form.append(dir);
@@ -209,6 +232,12 @@ public class MMSMIDlet
 //        form1.append(acceso1);
         form1.addCommand(Salir);
         form1.setCommandListener(this);
+
+        form3.addCommand(Salir);
+        form3.addCommand(Camara);
+        form3.addCommand(Mapa);
+        form3.addCommand(Guardar);
+        form3.setCommandListener(this);
     }
 
     public void startApp() {
@@ -232,8 +261,7 @@ public class MMSMIDlet
             cameraScreen.start();
         } else {
             cameraScreen = new CameraScreen(this);
-//      infoScreen = new InfoScreen();
-//      sendScreen = new SendScreen(this);
+
             Display.getDisplay(this).setCurrent(cameraScreen);
 
             resumeDisplay = cameraScreen;
@@ -243,9 +271,38 @@ public class MMSMIDlet
         }
     }
 
+    public void Camera1() {
+
+        if (resumeDisplay == null) {
+            System.out.println("alla camera1");
+            // Start the MMS connection
+//      startConnection(this);
+            // //Create the user interface
+            cameraScreen1 = new Camera(this);
+//      infoScreen = new InfoScreen();
+//      sendScreen = new SendScreen(this);
+            Display.getDisplay(this).setCurrent(cameraScreen1);
+
+            resumeDisplay = cameraScreen1;
+            cameraScreen1.start();
+        } else {
+            cameraScreen1 = new Camera(this);
+
+            Display.getDisplay(this).setCurrent(cameraScreen1);
+
+            resumeDisplay = cameraScreen1;
+            cameraScreen1.start();
+            Display.getDisplay(this).setCurrent(resumeDisplay);
+//            System.out.println("aca");
+        }
+    }
+
     public void pauseApp() {
         if (Display.getDisplay(this).getCurrent() == cameraScreen) {
             cameraScreen.stop();
+        }
+        if (Display.getDisplay(this).getCurrent() == cameraScreen1) {
+            cameraScreen1.stop();
         }
     }
 
@@ -253,6 +310,17 @@ public class MMSMIDlet
         if (Display.getDisplay(this).getCurrent() == cameraScreen) {
             cameraScreen.stop();
         }
+        if (Display.getDisplay(this).getCurrent() == cameraScreen1) {
+            cameraScreen1.stop();
+        }
+    }
+
+    void exitApplication1() {
+        closeConnection();
+//        Display.getDisplay(this).setCurrent(form);
+//        destroyApp(false);
+//        notifyDestroyed();
+        Display.getDisplay(this).setCurrent(form3);
     }
 
     void exitApplication() {
@@ -360,11 +428,12 @@ public class MMSMIDlet
                 byte[] b = re.previousRecord();
                 ByteArrayInputStream bais = new ByteArrayInputStream(b);
                 DataInputStream dis = new DataInputStream(bais);
-                String nombre = dis.readUTF();
-                nombre = nombre.toUpperCase();
+                String name = dis.readUTF();
+                name = name.toUpperCase();
 //                int pos = dis.readInt();
 //                this.posicion = pos;
-                if (nombre.equals(persona)) {
+                if (name.equals(persona)) {
+                    nombreAnterior = name;
                     encontro = true;
                     break;
                 }
@@ -437,10 +506,6 @@ public class MMSMIDlet
 //        form.append(acceso);
     }
 
-    public void show1(Image imag) {
-        this.img = imag;
-        Display.getDisplay(this).setCurrent(form);
-    }
 //Create a method for fetching the application ID.
 
     // return the application id, either from the
@@ -458,6 +523,10 @@ public class MMSMIDlet
     // Upon capturing an image, show the compose screen
     void imageCaptured(byte[] imageData) {
         cameraScreen.stop();
+    }
+
+    void imageCaptured1(byte[] imageData) {
+        cameraScreen1.stop();
     }
 
     // Displays the error screen
@@ -490,11 +559,31 @@ public class MMSMIDlet
             Display.getDisplay(this).setCurrent(form2);
         } else if (c == Salir) {
             Display.getDisplay(this).setCurrent(lista);
+        } else if (c == editarencuesta) {
+            Display.getDisplay(this).setCurrent(form4);
+
+        } else if (c == Mapa) {
+            MapService mp = new MapService(this);
+            mp.start();
         } else if (c == Buscar) {
             Lookup mp = new Lookup(this);
             mp.start();
 
+        } else if (c == Buscar1) {
+            Editar mp = new Editar(this);
+            mp.start();
         } else if (c == cmdSI) {
+
+            boolean flag = true;
+            try {
+                long numero = Integer.parseInt(tel.getString());
+            } catch (Exception e) {
+                Alert al = new Alert("Mensaje de Error", "El numero telefonico no es valido.", null, AlertType.ERROR);
+                //al.setTimeout(Alert.FOREVER);
+                Display.getDisplay(this).setCurrent(al);
+                flag = false;
+
+            }
             String it = null;
             if (intra.isSelected(0)) {
                 it = intra.getString(0);
@@ -522,7 +611,7 @@ public class MMSMIDlet
                 access = acceso.getString(3);
             }
 
-
+            nombre.setString(nombreAnterior);
             datos.setNombre(nombre.getString());
             datos.setTel(tel.getString());
             datos.setDir(dir.getString());
@@ -533,20 +622,27 @@ public class MMSMIDlet
             datos.setPngImage(pngImage);
             datos.setMapa(mapa);
             datos.setPngMap(pngMap);
-            try {
-                int pos = lista.getSelectedIndex();
-                String person = lista.getString(pos);
-                //lista.delete(pos);
-                System.out.println(pos);
-                Encuesta.modificarEncuesta(datos, person);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            if (flag == true) {
+                try {
+                    int pos = lista.getSelectedIndex();
+                    String person = lista.getString(pos);
+                    //lista.delete(pos);
+                    System.out.println(pos);
+                    Encuesta.modificarEncuesta(datos, person);
+                    posicion++;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                Llenar();
+                Display.getDisplay(this).setCurrent(lista);
+            } else {
+//                Display.getDisplay(this).setCurrent(form);
+//                Alert al = new Alert("El campo numero telefinico es incorrecto");
+//                Display.getDisplay(this).setCurrent(al);
             }
-            Llenar();
-            Display.getDisplay(this).setCurrent(lista);
-            posicion++;
+
         } else if (c == cmdNO) {
-            Display.getDisplay(this).setCurrent(lista);
+            Display.getDisplay(this).setCurrent(form);
         } else if (c == crear) {
             try {
                 inicializar();
@@ -557,7 +653,17 @@ public class MMSMIDlet
             Display.getDisplay(this).setCurrent(form);
         } else if (c == atras) {
             Display.getDisplay(this).setCurrent(lista);
+        } else if (c == Guardar) {
+            Transferir1();
         } else if (c == guardar) {
+            boolean flag = true;
+            try {
+                long numero = Integer.parseInt(tel.getString());
+            } catch (Exception e) {
+                Alert al = new Alert("Mensaje de Error", "El numero telefonico no es valido.", null, AlertType.ERROR);
+                Display.getDisplay(this).setCurrent(al);
+                flag = false;
+            }
             if (exist(nombre.getString()) == true && seleccion == false) {
                 //txtIChannel = new TextBox("¡", "Este nombre de contacto ya existe, ¿Reemplazar? "+nombre.getString(), 256, TextField.ANY);
                 txtIChannel.setString("Este nombre de contacto ya existe, ¿Reemplazar? " + nombre.getString());
@@ -602,18 +708,23 @@ public class MMSMIDlet
                 datos.setMapa(mapa);
                 datos.setPngMap(pngMap);
                 System.out.println(seleccion);
-                if (seleccion == false) {
+                if (seleccion == false && flag == true) {
                     Encuesta.almacenaEncuesta(datos);
-                } else if (seleccion == true) {
+                    Llenar();
+                    Display.getDisplay(this).setCurrent(lista);
+                    posicion++;
+                } else if (seleccion == true && flag == true) {
                     int pos = lista.getSelectedIndex();
                     String person = lista.getString(pos);
                     //lista.delete(pos);
                     System.out.println(pos);
                     Encuesta.modificarEncuesta(datos, person);
+                    Llenar();
+                    Display.getDisplay(this).setCurrent(lista);
+                    posicion++;
                 }
-                Llenar();
-                Display.getDisplay(this).setCurrent(lista);
-                posicion++;
+
+
             }
         } else if (c == editar) {
             if (lista.size() != 0) {
@@ -623,17 +734,19 @@ public class MMSMIDlet
                 Display.getDisplay(this).setCurrent(form);
             } else {
 
-                Alert alerta = new Alert("No hay algun objeto seleccionado");
+                Alert alerta = new Alert("Mensaje de Error", "No hay algun objeto seleccionado.", null, AlertType.ERROR);
                 Display.getDisplay(this).setCurrent(alerta);
             }
         } else if (c == camera) {
             Camera();
+        } else if (c == Camara) {
+            Camera1();
         } else if (c == transferir) {
             if (lista.size() != 0) {
                 Transferir();
             } else {
 
-                Alert alerta = new Alert("No hay algun objeto seleccionado");
+                Alert alerta = new Alert("Mensaje de Error", "No hay algun objeto seleccionado.", null, AlertType.ERROR);
                 Display.getDisplay(this).setCurrent(alerta);
             }
         } else if (c == eliminar) {
@@ -656,7 +769,7 @@ public class MMSMIDlet
 
 
             } else {
-                Alert alerta = new Alert("No hay algun objeto seleccionado");
+                Alert alerta = new Alert("Mensaje de Error", "No hay algun objeto seleccionado.", null, AlertType.ERROR);
                 Display.getDisplay(this).setCurrent(alerta);
             }
         /*-->*/ } else if (c == getMap) {
@@ -667,7 +780,7 @@ public class MMSMIDlet
 
     public void Transferir() {
         try {
-
+            bandera = 0;
             String p = lista.getString(lista.getSelectedIndex());
 
 
@@ -678,6 +791,8 @@ public class MMSMIDlet
             System.out.println("Nombre" + nomb);
             String tele = datos.getTel();
             System.out.println("Television" + tele);
+
+
             String direccion = datos.getDir();
             System.out.println("Television" + direccion);
             String it = datos.getIntra();
@@ -706,8 +821,72 @@ public class MMSMIDlet
             byte[] pngImage = datos.getPngImage();
             System.out.println("Transferir:prim:ult:" + pngImage[0] + " " + pngImage[pngImage.length - 1]);
             byte[] pngMap = datos.getPngMap();
+
             hiloEnvio = new Thread(this);
             hiloEnvio.start();
+
+
+        /* textBoxResultados.insert(nom, 0);
+        textBoxResultados.insert(gen, textBoxResultados.size());
+        textBoxResultados.insert(afs, textBoxResultados.size());
+
+        display.setCurrent(textBoxResultados);*/
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void Transferir1() {
+        try {
+
+            bandera = 1;
+
+            nombre11=nombre2.getString();
+            System.out.println(nombre11);
+            tel11 = tel2.getString();
+            System.out.println(tel11);
+            dir11 = dir2.getString();
+            if (intra2.isSelected(0)) {
+                intr11 = intra2.getString(0);
+            } else {
+                intr11 = intra2.getString(1);
+            }
+
+            if (intranet2.isSelected(0)) {
+                intra11 = intranet2.getString(0);
+            } else if (intranet2.isSelected(1)) {
+                intra11 = intranet2.getString(1);
+            } else if (intranet2.isSelected(2)) {
+                intra11 = intranet.getString(2);
+            } else {
+                intra11 = intranet.getString(3);
+            }
+
+            if (acceso2.isSelected(0)) {
+                acces11 = acceso2.getString(0);
+            } else if (acceso2.isSelected(1)) {
+                acces11 = acceso2.getString(1);
+            } else if (acceso2.isSelected(2)) {
+                acces11 = acceso2.getString(2);
+            } else {
+                acces11 = acceso2.getString(3);
+            }
+            d1.setNombre(nombre11);
+            d1.setTel(tel11);
+            d1.setDir(dir11);
+            d1.setIntra(intr11);
+            d1.setIntranet(intra11);
+            d1.setAcceso(acces11);
+            d1.setPngImage(data113);
+            d1.setPngMap(data11);
+            byte[] pngImage = data113;
+            System.out.println("Transferir:prim:ult:" + pngImage[0] + " " + pngImage[pngImage.length - 1]);
+            byte[] pngMap = data11;
+
+            hiloEnvio1 = new Thread(this);
+            hiloEnvio1.start();
+
 
         /* textBoxResultados.insert(nom, 0);
         textBoxResultados.insert(gen, textBoxResultados.size());
@@ -751,14 +930,14 @@ public class MMSMIDlet
                     ImageItem.LAYOUT_TOP |
                     ImageItem.LAYOUT_RIGHT, null);
             form.insert(0, imgItem);
-            pngImage = datos.getPngImage();
+//            pngImage = datos.getPngImage();
             Image map = datos.getMapa();
 //            map=createThumbnail(map);
             ImageItem imgItem1 = new ImageItem("", map,
                     ImageItem.LAYOUT_TOP |
                     ImageItem.LAYOUT_RIGHT, null);
             form.insert(1, imgItem1);
-            pngMap = datos.getPngMap();
+//            pngMap = datos.getPngMap();
             nombre = new TextField("Nombre:", "", 20, TextField.ANY);
             tel = new TextField("Telefono:", "", 20, TextField.ANY);
             dir = new TextField("Direccion:", "", 20, TextField.ANY);
@@ -819,6 +998,119 @@ public class MMSMIDlet
         }
     }
 
+    public void agregar1(String nombre12, int tel12, String dir12, String intr12, String intra12, String acces12, ImageItem imageItem12, ImageItem imageItem123,
+            byte data12[], byte[] data13) {
+//        System.out.println(data1.length);
+//        System.out.println(data.length);
+//        this.data1 = data1;
+//        this.data = data;
+        form1.deleteAll();
+
+        form1.insert(0, imageItem123);
+        form1.insert(1, imageItem12);
+        nombre1.setString(nombre12);
+        tel1.setString(String.valueOf(tel12));
+        dir1.setString(dir12);
+        if (intr12.equals(intra1.getString(0))) {
+            intra1.setSelectedIndex(0, true);
+        } else {
+            intra1.setSelectedIndex(1, true);
+        }
+        if (intra12.equals(intranet1.getString(0))) {
+            intranet1.setSelectedIndex(0, true);
+        } else if (intra12.equals(intranet1.getString(1))) {
+            intranet1.setSelectedIndex(1, true);
+        } else if (intra12.equals(intranet1.getString(2))) {
+            intranet1.setSelectedIndex(2, true);
+        } else {
+            intranet1.setSelectedIndex(3, true);
+        }
+        if (acces12.equals(acceso1.getString(0))) {
+            acceso1.setSelectedIndex(0, true);
+        } else if (acces12.equals(acceso1.getString(1))) {
+            acceso1.setSelectedIndex(1, true);
+        } else if (acces12.equals(acceso1.getString(2))) {
+            acceso1.setSelectedIndex(2, true);
+        } else {
+            acceso1.setSelectedIndex(3, true);
+        }
+
+        form1.append(nombre1);
+        form1.append(tel1);
+        form1.append(dir1);
+        form1.append(intra1);
+        form1.append(intranet1);
+        form1.append(acceso1);
+        Display.getDisplay(this).setCurrent(form1);
+
+    }
+
+    public void agregar(String nombre, int tel, String dir, String intr, String intra, String acces, ImageItem imageItem, ImageItem imageItem1,
+            byte data1[], byte[] data) {
+
+
+//        this.nombre11 = nombre;
+//        this.tel11 = String.valueOf(tel);
+//        this.dir11 = dir;
+//        this.intr11 = intr;
+//        this.intra11 = intra;
+//        this.acces11 = acces;
+        this.data11 = data1;
+        this.data113 = data;
+        System.out.println(data1.length);
+        System.out.println(data.length);
+//        this.data1 = data1;
+//        this.data = data;
+        form3.deleteAll();
+
+        form3.insert(0, imageItem1);
+        form3.insert(1, imageItem);
+
+        nombre2.setString(nombre);
+        tel2.setString(String.valueOf(tel));
+        dir2.setString(dir);
+        if (intr.equals(intra2.getString(0))) {
+            intra2.setSelectedIndex(0, true);
+        } else {
+            intra2.setSelectedIndex(1, true);
+        }
+        if (intra.equals(intranet2.getString(0))) {
+            intranet2.setSelectedIndex(0, true);
+        } else if (intra.equals(intranet2.getString(1))) {
+            intranet2.setSelectedIndex(1, true);
+        } else if (intra.equals(intranet2.getString(2))) {
+            intranet2.setSelectedIndex(2, true);
+        } else {
+            intranet2.setSelectedIndex(3, true);
+        }
+        if (acces.equals(acceso2.getString(0))) {
+            acceso2.setSelectedIndex(0, true);
+        } else if (acces.equals(acceso2.getString(1))) {
+            acceso2.setSelectedIndex(1, true);
+        } else if (acces.equals(acceso2.getString(2))) {
+            acceso2.setSelectedIndex(2, true);
+        } else {
+            acceso2.setSelectedIndex(3, true);
+        }
+
+//        for(int i=0;i<data1.length;i++){
+//            System.out.println( data1[i]);
+//        }
+//
+//        System.out.println("---------------------------------------------");
+//         for(int i=0;i<data.length;i++){
+//            System.out.println( data[i]);
+//        }
+        form3.append(nombre2);
+        form3.append(tel2);
+        form3.append(dir2);
+        form3.append(intra2);
+        form3.append(intranet2);
+        form3.append(acceso2);
+        Display.getDisplay(this).setCurrent(form3);
+
+    }
+
     public void Llenar() {
         lista.deleteAll();
         try {
@@ -833,8 +1125,8 @@ public class MMSMIDlet
             System.out.println("tamaño" + dato.size());
             for (int i = 0; i < dato.size(); i++) {
                 datos = (Datos) dato.elementAt(i);
-                System.out.println("nombre" + i);
-                lista.append(datos.getNombre(), createThumbnail(datos.getImagen()));
+                System.out.println("NOMBRE " + i);
+                lista.append(datos.getNombre(), createThumbnail1(datos.getImagen()));
             }
         }
     }
@@ -844,6 +1136,34 @@ public class MMSMIDlet
         int sourceHeight = image.getHeight();
 
         int thumbWidth = 30;//64
+        int thumbHeight = -1;//
+
+        if (thumbHeight == -1) {
+            thumbHeight = thumbWidth * sourceHeight / sourceWidth;
+        }
+
+        Image thumb = Image.createImage(thumbWidth, thumbHeight);
+        Graphics g = thumb.getGraphics();
+
+        for (int y = 0; y < thumbHeight; y++) {
+            for (int x = 0; x < thumbWidth; x++) {
+                g.setClip(x, y, 1, 1);
+                int dx = x * sourceWidth / thumbWidth;
+                int dy = y * sourceHeight / thumbHeight;
+                g.drawImage(image, x - dx, y - dy, Graphics.LEFT | Graphics.TOP);
+            }
+        }
+
+        Image immutableThumb = Image.createImage(thumb);
+
+        return immutableThumb;
+    }
+
+    private Image createThumbnail1(Image image) {
+        int sourceWidth = image.getWidth();
+        int sourceHeight = image.getHeight();
+
+        int thumbWidth = 40;//64
         int thumbHeight = -1;//
 
         if (thumbHeight == -1) {

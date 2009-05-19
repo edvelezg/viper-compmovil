@@ -48,7 +48,17 @@ public class Datos {
         /*-->*/ this.mapa = mapa;
         this.pngMap = pngMap;
     }
+    public Datos(String nombre, String tel, String dir, String intra, String intranet, String acceso, byte[] pngImage,byte[] pngMap) {
+        this.nombre = nombre;
+        this.tel = tel;
+        this.dir = dir;
+        this.intra = intra;
+        this.intranet = intranet;
+        this.acceso = acceso;
+        this.pngImage = pngImage;
 
+        this.pngMap = pngMap;
+    }
     /*-->*/
     public void setMapa(Image mapa) {
         this.mapa = mapa;

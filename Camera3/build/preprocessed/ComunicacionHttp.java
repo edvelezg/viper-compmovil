@@ -29,8 +29,8 @@ public class ComunicacionHttp {
 
     public ComunicacionHttp(MMSMIDlet eje) {
         pantalla = eje.getDisplay();
-        //indPr = new IndicadorProgreso();
-        //t = new Thread(indPr);
+    //indPr = new IndicadorProgreso();
+    //t = new Thread(indPr);
 
     }
 
@@ -49,35 +49,29 @@ public class ComunicacionHttp {
 
         dos.writeUTF(datos.getNombre());
         dos.writeUTF(datos.getTel());
+        dos.writeUTF(datos.getDir());
+        dos.writeUTF(datos.getIntra());
+        dos.writeUTF(datos.getIntranet());
+        dos.writeUTF(datos.getAcceso());
 
         // Mandar imagen
-//        Image image = datos.getImagen();
-
-//        int height, width;
-
-        // Calculate needed size and allocate buffer area
-        byte[] lectura;
+        byte[] pngImage;
+        pngImage = datos.getPngImage();
         dos.writeInt(datos.getPngImage().length);
-        lectura = datos.getPngImage();
         System.out.println("INICIO");
         for (int j = 0; j < datos.getPngImage().length; j++) {
 //            System.out.println(lectura[j]);
-            dos.writeByte(lectura[j]);
+            dos.writeByte(pngImage[j]);
         }
 
-//        height = image.getHeight();
-//        width = image.getWidth();
-//        int[] imgRgbData = new int[width * height];
-//        image.getRGB(imgRgbData, 0, width, 0, 0, width, height);
-//        dos.writeInt(width);
-//        dos.writeInt(height);
-//        dos.writeLong(System.currentTimeMillis());
-//        dos.writeInt(imgRgbData.length);
-//        //  Serialize the image raw data
-//        for (int i = 0; i < imgRgbData.length; i++) {
-//            dos.writeInt(imgRgbData[i]);
-//            System.out.println(imgRgbData[i]);
-//        }
+        byte[] pngMap;
+        pngMap = datos.getPngMap();
+        dos.writeInt(datos.getPngMap().length);
+        System.out.println("L: " + pngMap.length);
+        for (int j = 0; j < pngMap.length; j++) {
+//            System.out.println(lectura[j]);
+            dos.writeByte(pngMap[j]);
+        }
 
         if (conn.getResponseCode() == HttpConnection.HTTP_OK) {
             //Abrir Streams de entrada para la captura de la respuesta
@@ -96,15 +90,36 @@ public class ComunicacionHttp {
             ByteArrayInputStream bin = new ByteArrayInputStream(buf);
             DataInputStream dis = new DataInputStream(bin);
             String conf = dis.readUTF();
+            System.out.println("conf: " + conf);
             if (conf.equals("ok")) {
                 Alert a = new Alert("Info", "Envio exitoso", null, AlertType.CONFIRMATION);
                 a.setTimeout(1000);
                 pantalla.setCurrent(a, previous);
+            } else {
+                Alert a = new Alert("Info", "Encuesta ya existe.", null, AlertType.ERROR);
+                a.setTimeout(1000);
+                pantalla.setCurrent(a, previous);
             }
-            //indPr.stop();
+        //indPr.stop();
 
         } else {
             System.out.print("ERROR: " + conn.getResponseCode());
         }
+    }
+
+    //Envio de datos por HTTP Solicitando el Mapa
+    public InputStream requestMap(double platitud, double plongitud) throws IOException {
+
+        InputStream is = null;
+        String url = "http://maps.google.com/staticmap?center=" + platitud + "," + plongitud + "&maptype=mobile&zoom=8&size=180x100&key=ABQIAAAABeZfIxNYjCwcXnCyyn6_UxTwM0brOpm-All5BF6PoaKBxRWWERQBRYjiHo1pCHN8JVUB704wwgJFGQ";
+        HttpConnection conn = (HttpConnection) Connector.open(url, Connector.READ_WRITE);
+
+        if (conn.getResponseCode() == HttpConnection.HTTP_OK) {
+            is = conn.openInputStream();
+            System.out.print("DATO CONSULTADO: " + conn.getType());
+        } else {
+            System.out.print("ERROR CONSULTANDO URL: " + conn.getResponseCode());
+        }
+        return is;
     }
 }
