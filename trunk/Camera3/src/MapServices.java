@@ -29,8 +29,7 @@ public class MapServices extends Thread {
             Image im = Image.createImage(is);
             im = createThumbnail(im);
             ImageItem map = new ImageItem("", im, ImageItem.LAYOUT_TOP | ImageItem.LAYOUT_RIGHT, null);
-            Form f = new Form("Results");
-            padre.mapa = im;
+            padre.mapa=im;
             padre.form.delete(1);
             padre.form.insert(1, map);
             Display.getDisplay(padre).setCurrent(padre.form);

@@ -33,7 +33,7 @@ public class CargarImagenes extends Thread {
     private java.io.InputStream is = null;
     private final Command exitCommand;
     String imagen;
-    public ImageItem imageItem;
+    public ImageItem imageItem,imageItem1;
 
     public CargarImagenes(MMSMIDlet eje) {
         http = new ComunicacionHttp(eje);
@@ -42,7 +42,7 @@ public class CargarImagenes extends Thread {
     }
 
     public void run() {
-
+        
         HttpConnection hc = null;
 
 
@@ -78,10 +78,10 @@ public class CargarImagenes extends Thread {
                 }
                 Image image = Image.createImage(data, 0, length);
                 image = createThumbnail(image);
-                imageItem = new ImageItem(null, image, 0, null);
+                imageItem = new ImageItem("", image, ImageItem.LAYOUT_TOP | ImageItem.LAYOUT_RIGHT, null);
                 padre.img = image;
                 padre.pngImage = data;
-                padre.form.insert(0, imageItem);
+              
 
             } catch (IOException ioe) {
 //                StringItem stringItem = new StringItem(null, ioe.toString());
@@ -132,10 +132,10 @@ public class CargarImagenes extends Thread {
                 }
                 Image image = Image.createImage(data2, 0, length);
                 image = createThumbnail(image);
-                imageItem = new ImageItem(null, image, 0, null);
+                imageItem1 = new ImageItem("", image, ImageItem.LAYOUT_TOP | ImageItem.LAYOUT_RIGHT, null);
                 padre.mapa = image;
                 padre.pngMap = data2;
-                padre.form.insert(1, imageItem);
+              
 //                mProgressForm.setTitle("Done.");
             } catch (IOException ioe) {
 //                StringItem stringItem = new StringItem(null, ioe.toString());
@@ -153,6 +153,9 @@ public class CargarImagenes extends Thread {
                 }
             }
         }
+       
+         padre.form.insert(0, imageItem);
+         padre.form.insert(1, imageItem1);
     }
 
     private Image createThumbnail(Image image) {

@@ -67,12 +67,12 @@ public class ComunicacionHttp {
         byte[] pngMap;
         pngMap = datos.getPngMap();
         dos.writeInt(datos.getPngMap().length);
-        System.out.println("L: " +  pngMap.length);
+        System.out.println("L: " + pngMap.length);
         for (int j = 0; j < pngMap.length; j++) {
 //            System.out.println(lectura[j]);
             dos.writeByte(pngMap[j]);
         }
-        
+
         if (conn.getResponseCode() == HttpConnection.HTTP_OK) {
             //Abrir Streams de entrada para la captura de la respuesta
             InputStream is = conn.openInputStream();
@@ -93,6 +93,10 @@ public class ComunicacionHttp {
             System.out.println("conf: " + conf);
             if (conf.equals("ok")) {
                 Alert a = new Alert("Info", "Envio exitoso", null, AlertType.CONFIRMATION);
+                a.setTimeout(1000);
+                pantalla.setCurrent(a, previous);
+            } else {
+                Alert a = new Alert("Info", "Encuesta ya existe.", null, AlertType.ERROR);
                 a.setTimeout(1000);
                 pantalla.setCurrent(a, previous);
             }
