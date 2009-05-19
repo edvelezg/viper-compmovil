@@ -22,6 +22,10 @@
         <servlet-name>lookupservlet</servlet-name>
         <servlet-class>com.encuestas.LookupServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>deleteservlet</servlet-name>
+        <servlet-class>com.encuestas.EditServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
     <servlet-name>todoservlet</servlet-name>
     <url-pattern>/index.html</url-pattern>
@@ -53,5 +57,9 @@
     <servlet-mapping>
         <servlet-name>lookupservlet</servlet-name>
         <url-pattern>/lookup</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>deleteservlet</servlet-name>
+        <url-pattern>/delete</url-pattern>
     </servlet-mapping>
     </web-app>
