@@ -32,7 +32,12 @@ public class ToDoList {
         return list.size();
     }
 
-    public void addItem(String nombre, String telefono, String direccion, String intra, String intranet, String acceso, String imagen, String mapa) {
+    public boolean addItem(String nombre, String telefono, String direccion, String intra, String intranet, String acceso, String imagen, String mapa) {
+
+        List lista = selectItem(nombre);
+            if (lista.size() != 0)
+                return false;
+
         try {
             if (conn == null) {
                 conn = DriverManager.getConnection(jdbcConnectionString);
@@ -56,6 +61,7 @@ public class ToDoList {
                     ex.getMessage());
         }
         staleList = true;
+        return true;
     }
 
     public void deleteItem(int id) {
@@ -75,6 +81,31 @@ public class ToDoList {
         staleList = true;
     }
 
+    public boolean deleteName(String name) {
+
+        List lista = selectItem(name);
+            if (lista.size() == 0)
+                return false;
+        try {
+            if (conn == null) {
+                conn = DriverManager.getConnection(jdbcConnectionString);
+            }
+
+            PreparedStatement stmt = conn.prepareStatement(
+                    "DELETE FROM encuestas WHERE nombre=?");
+            stmt.setString(1, name);
+            stmt.executeUpdate();
+            staleList = true;
+            return true;
+        } catch (SQLException ex) {
+            System.err.println(
+                    "Error al borrar una persona de la Base de Datos:\n" +
+                    ex.getMessage());
+            return false;
+        }
+        
+    }
+    
     public List selectItem(String word) {
 
         ArrayList list = new ArrayList();
@@ -107,7 +138,7 @@ public class ToDoList {
 
         } catch (SQLException ex) {
             System.err.println(
-                    "Error deleting a to-do list item from the database:\n" +
+                    "Error selecting a personfrom the database:\n" +
                     ex.getMessage());
         }
         return list;

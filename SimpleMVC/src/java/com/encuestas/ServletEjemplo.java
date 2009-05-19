@@ -64,15 +64,21 @@ public class ServletEjemplo extends HttpServlet {
             String mapName = saveMap(rawMap);
 
             // Add to Database
+            boolean couldAdd = false;
             if (nombre != null && telefono != null) {
                 ToDoList toDoList = (ToDoList) getServletContext().getAttribute("toDoList");
-                toDoList.addItem(nombre, telefono, direccion, intra, intranet, acceso, imgName, mapName);
+                couldAdd = toDoList.addItem(nombre, telefono, direccion, intra, intranet, acceso, imgName, mapName);
             }
 
             
             bout = new ByteArrayOutputStream();
             dos = new DataOutputStream(bout);
-            dos.writeUTF("ok");
+
+            if (couldAdd)
+                dos.writeUTF("ok");
+            else
+                dos.writeUTF("false");
+            
             byte[] salidaB = bout.toByteArray();
             salida = new String(salidaB);
             out.print(salida);
