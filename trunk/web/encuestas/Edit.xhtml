@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.prime.com.tr/ui">
+
+    <ui:composition template="template2.xhtml">
+
+        <ui:define name="top">
+            <h2>Bienvenido a Encuestas</h2>
+        </ui:define>
+
+        <ui:define name="left">
+
+            <ul>
+                <li> 
+                    <h:outputLink value="./Create.xhtml">
+                        <h:outputText value="Crear" />
+                    </h:outputLink>
+                </li>
+                <li> 
+                    <h:outputLink value="./List.xhtml">
+                        <h:outputText value="Buscar" />
+                    </h:outputLink>
+                </li>
+                <li>
+                    <h:outputLink value="./List.xhtml">
+                        <h:outputText value="Regresar" />
+                    </h:outputLink>
+                </li>
+            </ul>
+        </ui:define>
+        
+        <ui:define name="content">
+            <h2> Editar Encuesta </h2> <br />
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.EditEncuestasLabel_nombre}" for="nombre" />
+                    <p:inputText id="nombre" value="#{encuestasController.selected.nombre}" title="#{bundle.EditEncuestasTitle_nombre}" />
+                    <h:outputLabel value="#{bundle.EditEncuestasLabel_telefono}" for="telefono" />
+                    <p:inputText id="telefono" value="#{encuestasController.selected.telefono}" title="#{bundle.EditEncuestasTitle_telefono}" />
+                    <h:outputLabel value="#{bundle.EditEncuestasLabel_direccion}" for="direccion" />
+                    <p:inputText id="direccion" value="#{encuestasController.selected.direccion}" title="#{bundle.EditEncuestasTitle_direccion}" />
+                    <h:outputLabel value="#{bundle.EditEncuestasLabel_intra}" for="intra" />                    
+                    <h:selectOneRadio id="intra" value="#{encuestasController.selected.intra}" title="#{bundle.CreateEncuestasTitle_intra}">
+                        <f:selectItem id="item1" itemLabel="Si" itemValue="1" />
+                        <f:selectItem id="item2" itemLabel="No" itemValue="0" />
+                    </h:selectOneRadio>
+                    <h:outputLabel value="#{bundle.EditEncuestasLabel_acceso}" for="acceso" />
+                    <h:selectOneRadio id="acceso" value="#{encuestasController.selected.acceso}" title="#{bundle.EditEncuestasTitle_acceso}">
+                        <f:selectItem id="it1" itemLabel="Si" itemValue="1" />
+                        <f:selectItem id="it2" itemLabel="No" itemValue="0" />
+                    </h:selectOneRadio>
+                    <h:outputLabel value="#{bundle.EditEncuestasLabel_id}" for="id" />
+                    <p:inputText id="id" value="#{encuestasController.selected.id}" title="#{bundle.EditEncuestasTitle_id}" required="true" requiredMessage="#{bundle.EditEncuestasRequiredMessage_id}"/>
+                </h:panelGrid>
+                <p:commandButton action="#{encuestasController.update}" value="#{bundle.EditEncuestasSaveLink}" ajax="false"/>
+                <br />
+                <br />
+                <p:commandButton action="View" value="#{bundle.EditEncuestasViewLink}" immediate="true" ajax="false"/>
+                <p:commandButton action="#{encuestasController.prepareList}" value="#{bundle.EditEncuestasShowAllLink}" immediate="true" ajax="false"/>
+                <p:commandButton value="#{bundle.EditEncuestasIndexLink}" action="/index" immediate="true" ajax="false"/>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>
+
+<!--                    <p:inputText id="intra" value="#{encuestasController.selected.intra}" title="#{bundle.EditEncuestasTitle_intra}" />-->
+<!--                                    <p:inputText id="acceso" value="#{encuestasController.selected.acceso}" title="#{bundle.EditEncuestasTitle_acceso}" />-->

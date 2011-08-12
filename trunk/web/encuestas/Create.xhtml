@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.prime.com.tr/ui" >
+
+    <ui:composition template="template2.xhtml">
+        <ui:define name="top">
+            <h2>Bienvenido a Encuestas</h2>
+        </ui:define>
+        <ui:define name="left">
+
+            <ul>
+                <li> 
+                    <h:outputLink value="./Create.xhtml">
+                        <h:outputText value="Crear" />
+                    </h:outputLink>
+                </li>
+                <li> 
+                    <h:outputLink value="./List.xhtml">
+                        <h:outputText value="Buscar" />
+                    </h:outputLink>
+                </li>
+                <li>
+                    <h:outputLink value="./List.xhtml">
+                        <h:outputText value="Regresar" />
+                    </h:outputLink>
+                </li>
+            </ul>
+        </ui:define>
+        <ui:define name="content">
+            <h2><h:outputText value="#{bundle.CreateEncuestasTitle}"></h:outputText></h2>
+            <br />
+            <h:form>
+                <h:panelGrid columns="3">
+                    <h:outputLabel value="#{bundle.CreateEncuestasLabel_nombre}" for="nombre" />
+                    <p:inputText id="nombre" value="#{encuestasController.selected.nombre}" title="#{bundle.CreateEncuestasTitle_nombre}" />
+                    <p:message for="nombre" />
+                    <h:outputLabel value="#{bundle.CreateEncuestasLabel_telefono}" for="telefono" />
+                    <p:inputText id="telefono" value="#{encuestasController.selected.telefono}" title="#{bundle.CreateEncuestasTitle_telefono}" />
+                    <p:message for="telefono" />
+                    <h:outputLabel value="#{bundle.CreateEncuestasLabel_direccion}" for="direccion" />
+                    <p:inputText id="direccion" value="#{encuestasController.selected.direccion}" title="#{bundle.CreateEncuestasTitle_direccion}" />
+                    <p:message for="direccion" />
+                    <h:outputLabel value="Hace usted uso de la intranet?" for="intra" />
+                    <h:selectOneRadio id="intra" value="#{encuestasController.selected.intra}" title="#{bundle.CreateEncuestasTitle_intra}">
+                        <f:selectItem id="item1" itemLabel="Si" itemValue="1" />
+                        <f:selectItem id="item2" itemLabel="No" itemValue="0" />
+                    </h:selectOneRadio>
+                    <p:message for="intra" />
+                    <h:outputLabel value="Tiene usted acceso a la intranet?" for="acceso" />                    
+                    <h:selectOneRadio id="acceso" value="#{encuestasController.selected.acceso}" title="#{bundle.CreateEncuestasTitle_acceso}">
+                        <f:selectItem id="it1" itemLabel="Si" itemValue="1" />
+                        <f:selectItem id="it2" itemLabel="No" itemValue="0" />
+                    </h:selectOneRadio>
+                    <p:message for="acceso" />
+                    <h:outputLabel value="#{bundle.CreateEncuestasLabel_id}" for="id" />
+                    <p:inputText id="id" value="#{encuestasController.selected.id}" title="#{bundle.CreateEncuestasTitle_id}" required="true" requiredMessage="#{bundle.CreateEncuestasRequiredMessage_id}"/>
+                    <p:message for="id" />
+                    <h:outputLabel for="birthDate" value="Fecha de encuesta" styleClass="optionalLbl"/>
+                    <p:calendar id="date" value="#{dateCalendar.encuestaDate}" showOn="button" inputStyle="width:100px;" navigator="true"/>
+                    <p:message for="date" />
+                </h:panelGrid>
+                <br />
+                <p:commandButton action="#{encuestasController.create}" value="#{bundle.CreateEncuestasSaveLink}" ajax="false"/>
+                <p:commandButton action="#{encuestasController.prepareList}" value="#{bundle.CreateEncuestasShowAllLink}" immediate="true" ajax="false"/>
+            </h:form>
+            <p:messages />
+        </ui:define>
+    </ui:composition>
+
+</html>
+
+<!--            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>-->

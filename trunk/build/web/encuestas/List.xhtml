@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.prime.com.tr/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="/resources/css/default.css" rel="stylesheet" type="text/css" />
+        <link href="/resources/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Encuestas</title>
+        <h:outputStylesheet name="css/jsfcrud.css"/>
+    </h:head>
+
+
+    <ui:composition template="template2.xhtml">
+
+        <ui:define name="top">
+            <h2>Bienvenido a Encuestas</h2>
+        </ui:define>
+
+        <ui:define name="left">
+
+            <ul>
+                <li> 
+                    <h:outputLink value="./Create.xhtml">
+                        <h:outputText value="Crear" />
+                    </h:outputLink>
+                </li>
+                <li> 
+                    <h:outputLink value="./List.xhtml">
+                        <h:outputText value="Buscar" />
+                    </h:outputLink>
+                </li>
+                <li>
+                    <h:outputLink value="./List.xhtml">
+                        <h:outputText value="Regresar" />
+                    </h:outputLink>
+                </li>
+            </ul>
+        </ui:define>
+
+        <ui:define name="content">
+            <h2>Listado de Encuestas</h2><br />
+            <h:form styleClass="jsfcrud_list_form">
+                <h:panelGroup id="messagePanel" layout="block">
+                    <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+                </h:panelGroup>
+                <h:outputText escape="false" value="#{bundle.ListEncuestasEmpty}" rendered="#{encuestasController.items.rowCount == 0}"/>
+                <h:panelGroup rendered="#{encuestasController.items.rowCount > 0}">
+                    <h:outputText value="#{encuestasController.pagination.pageFirstItem + 1}..#{encuestasController.pagination.pageLastItem + 1}/#{encuestasController.pagination.itemsCount}"/>&nbsp;
+                    <br/>
+                    <h:commandLink action="#{encuestasController.previous}" value="#{bundle.Previous} #{encuestasController.pagination.pageSize}" rendered="#{encuestasController.pagination.hasPreviousPage}"/>&nbsp;
+                    <h:commandLink action="#{encuestasController.next}" value="#{bundle.Next} #{encuestasController.pagination.pageSize}" rendered="#{encuestasController.pagination.hasNextPage}"/>&nbsp;
+                    <p:dataTable value="#{encuestasController.items}" var="item" style="width: 60%">
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListEncuestasTitle_nombre}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.nombre}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListEncuestasTitle_telefono}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.telefono}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListEncuestasTitle_direccion}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.direccion}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListEncuestasTitle_intra}"/>
+                            </f:facet>
+                            <h:outputText value="#{ (item.intra == 1) ? bundle.YesAnswer : bundle.NoAnswer}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListEncuestasTitle_acceso}"/>
+                            </f:facet>
+                            <h:outputText value="#{ (item.acceso == 1) ? bundle.YesAnswer : bundle.NoAnswer}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListEncuestasTitle_id}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.id}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="&nbsp;"/>
+                            </f:facet>
+                            <h:commandLink action="#{encuestasController.prepareView}" value="#{bundle.ListEncuestasViewLink}"/>
+                            <h:outputText value=" "/>
+                            <h:commandLink action="#{encuestasController.prepareEdit}" value="#{bundle.ListEncuestasEditLink}"/>
+                            <h:outputText value=" "/>
+                            <h:commandLink action="#{encuestasController.destroy}" value="#{bundle.ListEncuestasDestroyLink}"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:panelGroup>
+                <br />
+                <p:commandButton action="#{encuestasController.prepareCreate}" value="#{bundle.ListEncuestasCreateLink}" ajax="false"/>                
+<!--                <p:commandButton value="#{bundle.ListEncuestasIndexLink}" action="/index" immediate="true" ajax="false" />-->
+            </h:form>
+        </ui:define>
+
+    </ui:composition>
+
+</html>
