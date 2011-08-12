@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.prime.com.tr/ui">
+
+    <ui:composition template="template2.xhtml">
+
+        <ui:define name="top">
+            <h2>Bienvenido a Encuestas</h2>
+        </ui:define>
+
+        <ui:define name="left">
+
+            <ul>
+                <li> 
+                    <h:outputLink value="./Create.xhtml">
+                        <h:outputText value="Crear" />
+                    </h:outputLink>
+                </li>
+                <li> 
+                    <h:outputLink value="./List.xhtml">
+                        <h:outputText value="Buscar" />
+                    </h:outputLink>
+                </li>
+                <li>
+                    <h:outputLink value="./List.xhtml">
+                        <h:outputText value="Regresar" />
+                    </h:outputLink>
+                </li>
+            </ul>
+        </ui:define>
+
+        <ui:define name="content">
+            <h2><h:outputText value="#{bundle.ViewEncuestasTitle} Encuesta"></h:outputText></h2>
+            <br />
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <p:panel header="Customer Information">
+                    <h:panelGrid columns="2">
+                        <h:outputText value="#{bundle.ViewEncuestasLabel_nombre}"/>
+                        <h:outputText value="#{encuestasController.selected.nombre}" title="#{bundle.ViewEncuestasTitle_nombre}"/>
+                        <h:outputText value="#{bundle.ViewEncuestasLabel_telefono}"/>
+                        <h:outputText value="#{encuestasController.selected.telefono}" title="#{bundle.ViewEncuestasTitle_telefono}"/>
+                        <h:outputText value="#{bundle.ViewEncuestasLabel_direccion}"/>
+                        <h:outputText value="#{encuestasController.selected.direccion}" title="#{bundle.ViewEncuestasTitle_direccion}"/>
+                        <h:outputText value="Hace uso de la intranet?"/>
+                        <h:outputText value="#{encuestasController.selected.intra == 1 ? bundle.YesAnswer : bundle.NoAnswer}" title="#{bundle.ViewEncuestasTitle_intra}"/>
+                        <h:outputText value="Tiene acceso a la intranet?"/>
+                        <h:outputText value="#{(encuestasController.selected.acceso == 1) ? bundle.YesAnswer : bundle.NoAnswer}" title="#{bundle.ViewEncuestasTitle_acceso}"/>
+                        <h:outputText value="#{bundle.ViewEncuestasLabel_id}"/>
+                        <h:outputText value="#{encuestasController.selected.id}" title="#{bundle.ViewEncuestasTitle_id}"/>
+                    </h:panelGrid>
+                    <br />                  
+                    <p:commandButton action="#{encuestasController.destroyAndView}" value="#{bundle.ViewEncuestasDestroyLink}" ajax="false"/>
+                    <p:commandButton action="Edit" value="#{bundle.ViewEncuestasEditLink}" ajax="false"/>
+                    <p:commandButton action="#{encuestasController.prepareCreate}" value="#{bundle.ViewEncuestasCreateLink}" ajax="false"/>
+                    <br />
+                </p:panel>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>
+
+<!--                    <p:commandButton action="#{encuestasController.prepareList}" value="#{bundle.ViewEncuestasShowAllLink}" ajax="false" />-->
+
